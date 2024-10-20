@@ -38,7 +38,7 @@ app.use("/order/", orderRouter);
 app.use("/admin/", adminRouter);
 
 app.get("/", (req, res) => {
-  res.send("Server is Running....");
+  res.send("Server is Running....", process.env.CLIENT_ORIGIN);
 });
 
 const port = process.env.PORT || 8000;
