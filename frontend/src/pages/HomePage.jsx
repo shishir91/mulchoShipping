@@ -12,7 +12,7 @@ const HomePage = () => {
     }
   }, []);
 
-  return <div>HomePage</div>;
+  return <div className="mt-20 text-lg font-bold ">HomePage is currently under development</div>;
 };
 
 export default HomePage;
