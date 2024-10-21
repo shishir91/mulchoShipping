@@ -11,12 +11,10 @@ import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import api from "../api/config.js";
 
-const defaultTheme = createTheme();
 
 export default function Login() {
   const [formData, setFormData] = useState({});
@@ -55,7 +53,7 @@ export default function Login() {
   };
 
   return (
-    <ThemeProvider theme={defaultTheme}>
+    <div>
       <ToastContainer />
       <Container component="main" maxWidth="xs">
         <CssBaseline />
@@ -124,6 +122,6 @@ export default function Login() {
           </Box>
         </Box>
       </Container>
-    </ThemeProvider>
+    </div>
   );
 }
