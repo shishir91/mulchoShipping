@@ -38,6 +38,7 @@ const ProtectedRoute = ({ children }) => {
 const App = () => {
   return (
     <Router>
+      {/* <Loading/> */}
       <Navbar />
       <Routes>
         {/* Public Routes */}

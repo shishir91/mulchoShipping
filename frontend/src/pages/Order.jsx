@@ -186,7 +186,7 @@ const Order = () => {
               {status.name}
             </button>
           ))}
-          {user.role === "user" && user.isUserVerified && (
+          {user.role === "user" && user.status === "active" && user.isUserVerified && (
             <button
               onClick={() => navigate("/addOrder")}
               className={"p-2 px-4 rounded-md text-sm bg-blue-500 text-white"}

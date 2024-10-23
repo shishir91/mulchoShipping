@@ -39,7 +39,7 @@ export default function Register() {
         toast.success(response.data.message, {
           autoClose: 1000,
           theme: "colored",
-          onClose: () => navigate("/dashboard"),
+          onClose: () => navigate("/emailVerification"),
         });
       } else {
         toast.error(response.data.message, {
@@ -53,7 +53,7 @@ export default function Register() {
   };
 
   return (
-    <div>
+    <div className="mt-20">
       <ToastContainer />
       <Container component="main" maxWidth="xs">
         <CssBaseline />

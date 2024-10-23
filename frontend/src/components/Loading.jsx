@@ -1,12 +1,16 @@
 import React from "react";
-import "./loading.css";
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const Loading = () => {
   return (
     <div>
-      <div id="loader-overlay">
-        <div className="loader"></div>
-      </div>
+      <Backdrop
+        sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
+        open
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </div>
   );
 };

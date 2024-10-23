@@ -228,9 +228,15 @@ export default class AdminController {
           break;
 
         case "unBlock":
+          const user = await userModel.findById(userId);
           const unBlockUser = await userModel.findByIdAndUpdate(
             userId,
-            { status: "active" },
+            {
+              status:
+                user.isEmailVerified && !user.isUserVerified
+                  ? "underReview"
+                  : "active",
+            },
             { new: true }
           );
 
