@@ -25,11 +25,13 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-router.get("/", authMiddleware, userController.getMyData);
 router.post("/register", userController.register);
 router.post("/login", userController.login);
+router.get("/", authMiddleware, userController.getMyData);
 router.put("/kyc", authMiddleware, upload.single("payment"), (req, res) =>
   userController.kyc(req, res, imageName)
 );
+
+router.get("/getIncome", authMiddleware, userController.getIncome);
 
 export default router;

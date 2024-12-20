@@ -11,6 +11,7 @@ import {
   Drawer,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import logo from "/images/logo.png";
 import {
   Disclosure,
   DisclosureButton,
@@ -20,23 +21,22 @@ import {
   MenuItem as mItem,
   MenuItems,
 } from "@headlessui/react";
-import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import {
+  UserIcon,
+  Bars3Icon,
+  BellIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", current: true },
+  { name: "Products", href: "/products", current: true },
   { name: "Orders", href: "/orders", current: false },
-  { name: "My Income", href: "/income", current: false },
 ];
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
-
-const logoStyle = {
-  width: "140px",
-  height: "auto",
-  cursor: "pointer",
-};
 
 function Navbar() {
   const [open, setOpen] = React.useState(false);
@@ -92,11 +92,10 @@ function Navbar() {
               </div>
               <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                 <div className="flex flex-shrink-0 items-center">
-                  <img
-                    alt="Your Company"
-                    src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
-                    className="h-8 w-auto"
-                  />
+                  <img alt="MulCho" src={logo} className="h-20 w-auto" />
+                  <span className=" text-3xl font-bold text-gray-200">
+                    MulCho
+                  </span>
                 </div>
               </div>
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
@@ -112,13 +111,12 @@ function Navbar() {
                 {/* Profile dropdown */}
                 <Menu as="div" className="relative ml-3">
                   <div>
-                    <MenuButton className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                    <MenuButton className="relative flex rounded-full bg-gray-800 text-sm  focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                       <span className="absolute -inset-1.5" />
                       <span className="sr-only">Open user menu</span>
-                      <img
-                        alt=""
-                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                        className="h-8 w-8 rounded-full"
+                      <UserIcon
+                        aria-hidden="true"
+                        className="h-8 w-auto p-1 text-gray-400"
                       />
                     </MenuButton>
                   </div>
@@ -139,7 +137,8 @@ function Navbar() {
                     ) : user.status == "underReview" ? (
                       <mItem>
                         <a className="block px-4 py-2 text-sm bg-green-500 text-white-700">
-                          Your Account Is Under Review. You will be notify soon once its done.
+                          Your Account Is Under Review. You will be notify soon
+                          once its done.
                         </a>
                       </mItem>
                     ) : (
@@ -184,6 +183,23 @@ function Navbar() {
                   {item.name}
                 </DisclosureButton>
               ))}
+              {user.role == "admin" ? (
+                <DisclosureButton
+                  as="a"
+                  href="/payment"
+                  className="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
+                >
+                  Payment
+                </DisclosureButton>
+              ) : (
+                <DisclosureButton
+                  as="a"
+                  href="/income"
+                  className="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
+                >
+                  My Income
+                </DisclosureButton>
+              )}
               {user.role == "admin" && (
                 <DisclosureButton
                   as="a"
@@ -238,14 +254,20 @@ function Navbar() {
                   px: 0,
                 }}
               >
-                <img
-                  src={
-                    "https://assets-global.website-files.com/61ed56ae9da9fd7e0ef0a967/61f12e6faf73568658154dae_SitemarkDefault.svg"
-                  }
-                  style={logoStyle}
-                  alt="logo of sitemark"
+                <div
                   onClick={() => navigate("/")}
-                />
+                  className="flex items-center cursor-pointer"
+                >
+                  <img
+                    src={logo}
+                    className="h-20 w-auto"
+                    alt="logo of MulCho"
+                  />
+                  <span className="text-2xl font-bold text-gray-800">
+                    MulCho
+                  </span>
+                </div>
+
                 <Box sx={{ display: { xs: "none", md: "flex" } }}>
                   <MenuItem
                     onClick={() => scrollToSection("features")}

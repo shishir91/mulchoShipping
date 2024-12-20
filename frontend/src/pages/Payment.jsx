@@ -4,9 +4,8 @@ import { ToastContainer, toast } from "react-toastify";
 import api from "../api/config.js";
 import { useNavigate } from "react-router-dom";
 
-const MyIncome = () => {
-  const [totalIncome, setTotalIncome] = useState(0);
-  const [incomeData, setIncomeData] = useState([]);
+const Payment = () => {
+  const [paymentData, setPaymentData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
@@ -15,35 +14,34 @@ const MyIncome = () => {
   const status = queryParams.get("status");
 
   useEffect(() => {
-    async function fetchIncomeData() {
+    async function fetchPaymentData() {
       try {
-        const response = await api.get("/user/getIncome", {
+        const response = await api.get("/admin/payments", {
           headers: { token },
         });
         if (response.data.success) {
-          setIncomeData(response.data.income);
-          setTotalIncome(
-            response.data.income
-              .filter((income) => income.status === "sent")
-              .reduce((acc, item) => {
-                return acc + item.amount;
-              }, 0)
-          );
+          console.log(response.data);
+
+          setPaymentData(response.data.payments);
         }
       } catch (error) {
-        toast.error("Failed to fetch income data.");
+        toast.error("Failed to fetch payment data.");
       } finally {
         setIsLoading(false);
       }
     }
-    fetchIncomeData();
+    fetchPaymentData();
   }, [token]);
 
-  let filteredIncome = incomeData.filter((income) => income.status === "sent");
+  let filteredPayment = paymentData.filter(
+    (payment) => payment.status === "pending"
+  );
 
   if (status) {
-    filteredIncome = incomeData.filter((income) => income.status === status);
-    console.log(filteredIncome);
+    filteredPayment = paymentData.filter(
+      (payment) => payment.status === status
+    );
+    console.log(filteredPayment);
   }
 
   return (
@@ -52,14 +50,14 @@ const MyIncome = () => {
       <div className="max-w-7xl mx-auto bg-white shadow-md rounded-lg p-6">
         <h2 className="text-3xl font-semibold mb-4 flex items-center">
           <CurrencyDollarIcon className="h-8 w-8 text-green-500 mr-2" />
-          My Income
+          Payments
         </h2>
 
-        {/* Total Income Summary */}
-        <div className="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {/* Total Payment Summary */}
+        {/* <div className="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="bg-blue-100 p-4 rounded-lg shadow-md">
             <h3 className="text-lg font-semibold text-gray-700">
-              Total Income
+              Total Payment
             </h3>
             <p className="text-2xl font-bold text-blue-500 mt-2">
               ${parseFloat(totalIncome).toFixed(2)}
@@ -92,26 +90,26 @@ const MyIncome = () => {
               <p className="text-sm text-gray-500">No recent income found.</p>
             )}
           </div>
-        </div>
+        </div> */}
 
-        {/* Detailed Income List */}
+        {/* Detailed Payment List */}
         <div className="bg-gray-100 p-4 rounded-lg shadow-md">
-          <h3 className="text-lg font-semibold text-gray-700 mb-4">
-            Income Details
-          </h3>
+          {/* <h3 className="text-lg font-semibold text-gray-700 mb-4">
+            Payment Details
+          </h3> */}
 
           <div className="flex space-x-4 mb-4">
             <button
-              onClick={() => navigate("/income?status=sent")}
-              className={`p-2 px-4 rounded-md text-sm bg-gray-200 text-gray-700 hover:bg-teal-700 hover:text-white`}
-            >
-              RECEIVED
-            </button>
-            <button
-              onClick={() => navigate("/income?status=pending")}
+              onClick={() => navigate("/payment?status=pending")}
               className={`p-2 px-4 rounded-md text-sm bg-gray-200 text-gray-700 hover:bg-teal-700 hover:text-white`}
             >
               PENDING
+            </button>
+            <button
+              onClick={() => navigate("/payment?status=sent")}
+              className={`p-2 px-4 rounded-md text-sm bg-gray-200 text-gray-700 hover:bg-teal-700 hover:text-white`}
+            >
+              SENT
             </button>
           </div>
 
@@ -121,28 +119,37 @@ const MyIncome = () => {
                 <tr className="bg-gray-300">
                   <th className="p-3">#</th>
                   <th className="p-3">Date</th>
-                  <th className="p-3">Source</th>
-                  <th className="p-3">Amount ($)</th>
+                  <th className="p-3">Item</th>
+                  <th className="p-3">From</th>
+                  <th className="p-3">Commission Amount ($)</th>
                 </tr>
               </thead>
               <tbody>
-                {filteredIncome.length > 0 ? (
-                  filteredIncome.map((income, index) => (
-                    <tr key={income._id} className="border-b">
+                {filteredPayment.length > 0 ? (
+                  filteredPayment.map((payment, index) => (
+                    <tr
+                      style={{ cursor: "pointer" }}
+                      key={payment._id}
+                      className="border-b"
+                      onClick={() =>
+                        navigate("/PaymentDetail", { state: payment })
+                      }
+                    >
                       <td className="p-3">{index + 1}</td>
                       <td className="p-3">
-                        {new Date(income.createdAt).toLocaleDateString()}
+                        {new Date(payment.createdAt).toLocaleDateString()}
                       </td>
-                      <td className="p-3">{income.source[0].productName}</td>
+                      <td className="p-3">{payment.source[0].productName}</td>
+                      <td className="p-3">{payment.to[0].name}</td>
                       <td className="p-3 text-green-600 font-medium">
-                        ${income.amount}
+                        ${payment.amount}
                       </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td className="p-3 text-center" colSpan="4">
-                      No income records found.
+                    <td className="p-3 text-center" colSpan="5">
+                      No payment records found.
                     </td>
                   </tr>
                 )}
@@ -155,4 +162,4 @@ const MyIncome = () => {
   );
 };
 
-export default MyIncome;
+export default Payment;

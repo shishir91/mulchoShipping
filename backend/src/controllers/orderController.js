@@ -25,6 +25,11 @@ export default class OrderController {
         success: false,
         message: "Your account is not verified yet.",
       });
+    } else if (req.user.status === "blocked") {
+      return res.json({
+        success: false,
+        message: "Your account is Blocked.",
+      });
     }
     try {
       let newOrder = await orderModel.create({

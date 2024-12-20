@@ -1,4 +1,5 @@
 import userModel from "../models/userModel.js";
+import transactionModel from "../models/transactionModel.js";
 import orderModel from "../models/orderModel.js";
 import bcrypt from "bcrypt";
 import validator from "validator";
@@ -147,6 +148,17 @@ export default class UserController {
       }
     } catch (e) {
       console.log(e);
+    }
+  }
+
+  async getIncome(req, res) {
+    try {
+      const income = await transactionModel
+        .find({ to: req.user._id })
+        .populate("to source", "-password -otp");
+      res.json({ success: true, income });
+    } catch (err) {
+      res.status(400).send(err);
     }
   }
 }

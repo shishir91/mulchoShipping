@@ -9,6 +9,8 @@ import {
   UserGroupIcon,
 } from "@heroicons/react/24/outline";
 import api from "../api/config.js";
+import Alert from "../components/Alerter.jsx";
+import Alerter from "../components/Alerter.jsx";
 
 const Dashboard = () => {
   const hasFetched = useRef(false);
@@ -29,10 +31,12 @@ const Dashboard = () => {
     if (response.data.success) {
       setUser(response.data.data);
       localStorage.setItem("userInfo", JSON.stringify(response.data.data));
-      const response1 = await api.get("/admin/users", { headers: { token } });
-      if (response1.data.success) {
-        setTotalUsers(response1.data.users.length);
-      }
+    }
+  };
+  const fetchAllUsers = async () => {
+    const response1 = await api.get("/admin/users", { headers: { token } });
+    if (response1.data.success) {
+      setTotalUsers(response1.data.users.length);
     }
   };
   const fetchUserOrders = async () => {
@@ -40,7 +44,6 @@ const Dashboard = () => {
       headers: { token },
     });
     if (response.data.success) {
-
       setUserOrders(response.data.myOrders);
     }
   };
@@ -58,6 +61,7 @@ const Dashboard = () => {
       fetchUserData();
       if (userls.role == "admin") {
         fetchAllOrders();
+        fetchAllUsers();
         hasFetched.current = true;
       } else {
         fetchUserOrders();
@@ -115,6 +119,14 @@ const Dashboard = () => {
   return (
     <div>
       <div className="p-4 sm:ml-64">
+        {(user.status === "blocked" ||
+          user.status === "underReview" ||
+          !user.isUserVerified) && (
+          <Alerter
+            userStatus={user.status}
+            userVerified={user.isUserVerified}
+          />
+        )}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 p-6">
           {stats.map((stat) => (
             <div

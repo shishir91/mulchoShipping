@@ -4,12 +4,15 @@ import { ToastContainer, toast } from "react-toastify";
 
 import api from "../api/config.js";
 import Loading from "../components/Loading.jsx";
+import Alerter from "../components/Alerter.jsx";
 
 const Order = () => {
   const [isLoading, setIsLoading] = useState(false);
   const hasFetched = useRef(false);
   const navigate = useNavigate();
+  const [commissionAmount, setCommissionAmmount] = useState();
   const [showModal, setShowModal] = useState(false);
+  const [modelStatus, setModelStatus] = useState("");
   const [cancelOrderId, setCancelOrderId] = useState();
   const [contextMenu, setContextMenu] = useState(null);
   const [showStatusMenu, setShowStatusMenu] = useState(false); // to toggle the status dropdown
@@ -22,7 +25,7 @@ const Order = () => {
 
   // Parse query parameters
   const queryParams = new URLSearchParams(location.search);
-  const order = queryParams.get("order"); // e.g., 'confirmed'
+  const order = queryParams.get("order");
 
   const allStatus = [
     { name: "All ORDERS", id: "all" },
@@ -34,6 +37,12 @@ const Order = () => {
     { name: "CANCELLED", id: "cancelled" },
   ];
 
+  const fetchUserData = async () => {
+    const response = await api.get("/user", { headers: { token } });
+    if (response.data.success) {
+      localStorage.setItem("userInfo", JSON.stringify(response.data.data));
+    }
+  };
   const fetchUserOrders = async () => {
     const response = await api.get("/order/getMyOrders", {
       headers: { token },
@@ -42,7 +51,6 @@ const Order = () => {
       setUserOrders(response.data.myOrders);
     }
   };
-
   const fetchAllOrders = async () => {
     const response = await api.get("/admin/orders", {
       headers: { token },
@@ -54,6 +62,7 @@ const Order = () => {
 
   useEffect(() => {
     if (!hasFetched.current) {
+      fetchUserData();
       if (user.role == "admin") {
         fetchAllOrders();
         hasFetched.current = true;
@@ -81,7 +90,7 @@ const Order = () => {
             setShowModal(false);
             // Re-fetch orders after cancellation
             user.role === "admin" ? fetchAllOrders() : fetchUserOrders();
-            navigate("/orders");
+            navigate(`/orders?order=${order}`);
           },
         });
       }
@@ -130,18 +139,19 @@ const Order = () => {
     }
   };
 
-  const handleStatusChange = async (status, orderId) => {
+  const handleStatusChange = async (status, orderId, amount) => {
     setIsLoading(true);
     console.log(`Changing order ${orderId} to status: ${status}`);
     const response = await api.put(
       "/admin/changeOrderStatus",
-      { orderId, status },
+      { orderId, status, amount },
       { headers: { token } }
     );
     setIsLoading(false);
     if (response.data.success) {
+      setShowModal(false);
       toast.success(response.data.message, {
-        autoClose: 2000,
+        autoClose: 1000,
         theme: "colored",
         onClose: () => {
           // Re-fetch orders after cancellation
@@ -156,9 +166,14 @@ const Order = () => {
   return (
     <div className="p-4 sm:ml-64">
       <ToastContainer />
+      {(user.status === "blocked" ||
+        user.status === "underReview" ||
+        !user.isUserVerified) && (
+        <Alerter userStatus={user.status} userVerified={user.isUserVerified} />
+      )}
       <div className="p-6">
         {isLoading && <Loading />}
-        {/* Filters Section */}
+        {/* Search Section */}
         <div className="flex items-center space-x-4 mb-4">
           <input
             type="text"
@@ -186,14 +201,16 @@ const Order = () => {
               {status.name}
             </button>
           ))}
-          {user.role === "user" && user.status === "active" && user.isUserVerified && (
-            <button
-              onClick={() => navigate("/addOrder")}
-              className={"p-2 px-4 rounded-md text-sm bg-blue-500 text-white"}
-            >
-              Add New Order
-            </button>
-          )}
+          {user.role === "user" &&
+            user.status === "active" &&
+            user.isUserVerified && (
+              <button
+                onClick={() => navigate("/addOrder")}
+                className={"p-2 px-4 rounded-md text-sm bg-blue-500 text-white"}
+              >
+                Add New Order
+              </button>
+            )}
         </div>
 
         {/* Table */}
@@ -275,9 +292,11 @@ const Order = () => {
                           navigate(`/orderDetail?orderId=${ord._id}`)
                         }
                         className="cursor-pointer"
-                        onContextMenu={(e) =>
-                          user.role === "admin" && handleRightClick(e, ord._id)
-                        }
+                        onContextMenu={(e) => {
+                          order !== "cancelled" &&
+                            user.role === "admin" &&
+                            handleRightClick(e, ord._id);
+                        }}
                       >
                         <td className="p-2 border-b border-gray-300">
                           {index + 1}
@@ -323,6 +342,7 @@ const Order = () => {
                                 e.stopPropagation();
                                 setShowModal(true);
                                 setCancelOrderId(ord._id);
+                                setModelStatus("canceled");
                               }}
                               className={
                                 "p-2 ml-1 px-4 rounded-md text-sm bg-red-500 text-white"
@@ -389,8 +409,20 @@ const Order = () => {
                         .map((status) => (
                           <li
                             key={status.id}
-                            onClick={() =>
-                              handleStatusChange(status.id, contextMenu.orderId)
+                            onClick={
+                              status.id == "delivered"
+                                ? (e) => {
+                                    setModelStatus("delivered");
+                                    setContextMenu(null);
+                                    e.stopPropagation();
+                                    setShowModal(true);
+                                    setCancelOrderId(contextMenu.orderId);
+                                  }
+                                : () =>
+                                    handleStatusChange(
+                                      status.id,
+                                      contextMenu.orderId
+                                    )
                             }
                             className="cursor-pointer hover:bg-gray-200 p-2"
                           >
@@ -402,6 +434,7 @@ const Order = () => {
                 </li>
                 <li
                   onClick={(e) => {
+                    setModelStatus("canceled");
                     setContextMenu(null);
                     e.stopPropagation();
                     setShowModal(true);
@@ -416,30 +449,66 @@ const Order = () => {
           )}
 
           {/* Modal */}
-          {showModal && (
-            <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
-              <div className="bg-white rounded-lg p-6 w-full max-w-lg mx-auto shadow-lg">
-                <h2 className="text-xl font-semibold mb-4">Cancel Order</h2>
-                <p className="text-gray-600 mb-2">
-                  Are you sure you want to cancel this order?
-                </p>
-                <div className="flex justify-end mt-4">
-                  <button
-                    onClick={() => setShowModal(false)} // Close modal
-                    className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-lg mr-2"
-                  >
-                    No
-                  </button>
-                  <button
-                    onClick={() => handleCancelOrder(cancelOrderId)}
-                    className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg"
-                  >
-                    Yes
-                  </button>
+          {showModal &&
+            (modelStatus == "canceled" ? (
+              <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
+                <div className="bg-white rounded-lg p-6 w-full max-w-lg mx-auto shadow-lg">
+                  <h2 className="text-xl font-semibold mb-4">Cancel Order</h2>
+                  <p className="text-gray-600 mb-2">
+                    Are you sure you want to cancel this order?
+                  </p>
+                  <div className="flex justify-end mt-4">
+                    <button
+                      onClick={() => setShowModal(false)} // Close modal
+                      className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-lg mr-2"
+                    >
+                      No
+                    </button>
+                    <button
+                      onClick={() => handleCancelOrder(cancelOrderId)}
+                      className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg"
+                    >
+                      Yes
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            ) : (
+              <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
+                <div className="bg-white rounded-lg p-6 w-full max-w-lg mx-auto shadow-lg">
+                  <h2 className="text-xl font-semibold mb-4">Item Delivered</h2>
+                  <p className="text-gray-600 mb-2">
+                    Enter commission amount for this product :
+                  </p>
+                  <input
+                    type="number"
+                    className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    value={commissionAmount}
+                    onChange={(e) => setCommissionAmmount(e.target.value)}
+                  />
+                  <div className="flex justify-end mt-4">
+                    <button
+                      onClick={() => setShowModal(false)} // Close modal
+                      className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-lg mr-2"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleStatusChange(
+                          modelStatus,
+                          cancelOrderId,
+                          commissionAmount
+                        )
+                      }
+                      className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg"
+                    >
+                      Confirm Delivery
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
         </div>
       </div>
     </div>

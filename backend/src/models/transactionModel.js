@@ -12,13 +12,15 @@ const transactionModel = mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Order",
+        unique: true,
       },
     ],
+    amount: { type: String },
     status: { type: String, default: "pending" },
     proof: { type: String },
   },
   {
-    timeStamp: true,
+    timestamps: true,
   }
 );
 

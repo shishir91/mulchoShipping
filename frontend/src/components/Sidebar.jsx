@@ -4,10 +4,12 @@ import {
   ShoppingBagIcon,
   CurrencyDollarIcon,
   UserGroupIcon,
+  ArchiveBoxIcon,
 } from "@heroicons/react/24/solid";
 
 const Sidebar = () => {
   const user = JSON.parse(localStorage.getItem("userInfo"));
+
   return (
     <div>
       <aside
@@ -26,25 +28,46 @@ const Sidebar = () => {
                 <span className="ms-3">Dashboard</span>
               </a>
             </li>
+            <li>
+              <a
+                href="/products"
+                className="flex items-center p-2 rounded-lg text-white hover:bg-gray-700 group"
+              >
+                <ShoppingBagIcon className="w-5 h-5 transition duration-75 text-gray-400 group-hover:text-white" />
+                <span className="ms-3">Products</span>
+              </a>
+            </li>
 
             <li>
               <a
                 href="/orders"
                 className="flex items-center p-2 rounded-lg text-white hover:bg-gray-700 group"
               >
-                <ShoppingBagIcon className="w-5 h-5 transition duration-75 text-gray-400 group-hover:text-white" />
+                <ArchiveBoxIcon className="w-5 h-5 transition duration-75 text-gray-400 group-hover:text-white" />
                 <span className="flex-1 ms-3 whitespace-nowrap">Orders</span>
               </a>
             </li>
 
             <li>
-              <a
-                href="/income"
-                className="flex items-center p-2 rounded-lg text-white hover:bg-gray-700 group"
-              >
-                <CurrencyDollarIcon className="w-5 h-5 transition duration-75 text-gray-400 group-hover:text-white" />
-                <span className="flex-1 ms-3 whitespace-nowrap">My Income</span>
-              </a>
+              {user.role === "admin" ? (
+                <a
+                  href="/payment"
+                  className="flex items-center p-2 rounded-lg text-white hover:bg-gray-700 group"
+                >
+                  <CurrencyDollarIcon className="w-5 h-5 transition duration-75 text-gray-400 group-hover:text-white" />
+                  <span className="flex-1 ms-3 whitespace-nowrap">Payment</span>
+                </a>
+              ) : (
+                <a
+                  href="/income"
+                  className="flex items-center p-2 rounded-lg text-white hover:bg-gray-700 group"
+                >
+                  <CurrencyDollarIcon className="w-5 h-5 transition duration-75 text-gray-400 group-hover:text-white" />
+                  <span className="flex-1 ms-3 whitespace-nowrap">
+                    My Income
+                  </span>
+                </a>
+              )}
             </li>
 
             {user.role == "admin" && (

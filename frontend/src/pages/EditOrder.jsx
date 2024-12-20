@@ -19,6 +19,7 @@ const EditOrder = () => {
   const queryParams = new URLSearchParams(location.search);
   const orderId = queryParams.get("orderId");
   const token = localStorage.getItem("token");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -45,6 +46,7 @@ const EditOrder = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     console.log(formData);
     try {
       const response = await api.put(`/order/editOrder/${orderId}`, formData, {
@@ -54,12 +56,17 @@ const EditOrder = () => {
         toast.success(response.data.message, {
           autoClose: 1000,
           theme: "colored",
-          onClose: () => navigate("/orders"),
+          onClose: () => {
+            setIsSubmitting(false);
+            navigate("/orders");
+          },
         });
       } else {
+        setIsSubmitting(false);
         toast.error("Failed to update order");
       }
     } catch (error) {
+      setIsSubmitting(false);
       console.error("Error updating order:", error);
       toast.error("An error occurred while updating the order");
     }
@@ -194,6 +201,7 @@ const EditOrder = () => {
           {/* Submit Button */}
           <button
             type="submit"
+            disabled={isSubmitting}
             className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 flex items-center justify-center"
           >
             <PlusIcon className="h-5 w-5 text-white mr-2" />

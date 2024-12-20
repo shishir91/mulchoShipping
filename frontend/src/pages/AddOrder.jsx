@@ -17,6 +17,7 @@ import api from "../api/config.js";
 const AddOrder = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     productName: "",
     qty: "",
@@ -40,6 +41,7 @@ const AddOrder = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     // Display form data in the console
+    setIsSubmitting(true);
     console.log(token);
 
     console.log("Form Submitted", formData);
@@ -54,9 +56,13 @@ const AddOrder = () => {
         toast.success(response.data.message, {
           autoClose: 1000,
           theme: "colored",
-          onClose: () => navigate("/orders"),
+          onClose: () => {
+            setIsSubmitting(false);
+            navigate("/orders");
+          },
         });
       } else {
+        setIsSubmitting(false);
         console.log(response);
         toast.error(response.data.message, {
           autoClose: 2000,
@@ -64,6 +70,7 @@ const AddOrder = () => {
         });
       }
     } catch (e) {
+      setIsSubmitting(false);
       console.log(e);
       toast.error(e, {
         autoClose: 2000,
@@ -201,6 +208,7 @@ const AddOrder = () => {
           {/* Submit Button */}
           <button
             type="submit"
+            disabled={isSubmitting}
             className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 flex items-center justify-center"
           >
             <PlusIcon className="h-5 w-5 text-white mr-2" />

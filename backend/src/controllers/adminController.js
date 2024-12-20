@@ -2,6 +2,7 @@ import userModel from "../models/userModel.js";
 import orderModel from "../models/orderModel.js";
 import MailController from "./mailController.js";
 import transactionModel from "../models/transactionModel.js";
+import productModel from '../models/productModel.js'
 
 const mailController = new MailController();
 
@@ -60,7 +61,7 @@ export default class AdminController {
 
   async changeOrderStatus(req, res) {
     try {
-      const { orderId, status } = req.body;
+      const { orderId, status, amount } = req.body;
 
       let updatedOrder = await orderModel.findByIdAndUpdate(orderId, {
         status,
@@ -82,6 +83,7 @@ export default class AdminController {
         transaction = await transactionModel.create({
           to: updatedOrder.orderFrom,
           source: updatedOrder,
+          amount,
         });
       }
 
@@ -275,6 +277,26 @@ export default class AdminController {
       return res
         .status(500)
         .json({ success: false, message: "Internal server error" });
+    }
+  }
+
+  async getAllPayments(req, res) {
+    try {
+      const payments = await transactionModel
+        .find()
+        .populate("to source", "-password -otp");
+      console.log(payments);
+
+      return res.json({ success: true, payments });
+    } catch (error) {
+      return res.status(400).send(error);
+    }
+  }
+
+  async addProduct(req, res) {
+    try {
+    } catch (error) {
+      return res.status(400).send(error);
     }
   }
 }
