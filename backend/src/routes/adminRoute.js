@@ -1,24 +1,39 @@
-import { Router } from "express";
 import multer from "multer";
+import { Router } from "express";
 import adminMiddleware from "../middlewares/adminMiddleware.js";
 import AdminController from "../controllers/adminController.js";
 
 const router = Router();
 
-let imageName;
+// Configure multer storage with destination and filename
 const storage = multer.diskStorage({
   filename: function (req, file, cb) {
-    imageName =
+    const uniqueName =
       Date.now() +
       "-" +
       Math.round(Math.random() * 1e9) +
       "-" +
       file.originalname.trim();
-    cb(null, imageName);
+    cb(null, uniqueName);
   },
 });
 
-const upload = multer({ storage: storage });
+// File validation (optional)
+const fileFilter = (req, file, cb) => {
+  // Accept only certain file types (e.g., images)
+  if (file.mimetype.startsWith("image/")) {
+    cb(null, true);
+  } else {
+    cb(new Error("Invalid file type, only images are allowed!"), false);
+  }
+};
+
+// Initialize multer upload instance
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB size limit
+  fileFilter: fileFilter,
+});
 
 const adminController = new AdminController();
 
@@ -32,11 +47,22 @@ router.get("/users", adminMiddleware, adminController.fetchUsers);
 router.get("/orders", adminMiddleware, adminController.fetchOrders);
 router.get("/payments", adminMiddleware, adminController.getAllPayments);
 
-router.get(
+router.put("/products", adminMiddleware, adminController.editProduct);
+router.delete("/products", adminMiddleware, adminController.deleteProduct);
+router.post(
+  "/changeProductStatus",
+  adminMiddleware,
+  adminController.changeProductStatus
+);
+router.post(
   "/addProduct",
   adminMiddleware,
-  upload.array("product", 5),
-  adminController.addProduct
+  upload.array("productImages", 5), // Matches "productImages" from frontend
+  (req, res) => {
+    console.log("Request fields:", req.body); // Logs additional form data
+    console.log("Request files:", req.files); // Logs uploaded files
+    adminController.addProduct(req, res);
+  }
 );
 
 router.put(

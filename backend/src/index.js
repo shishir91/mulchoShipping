@@ -5,6 +5,7 @@ import userRoute from "./routes/userRoute.js";
 import mailRouter from "./routes/mailRoute.js";
 import orderRouter from "./routes/orderRoute.js";
 import adminRouter from "./routes/adminRoute.js";
+import productRouter from "./routes/productRoute.js";
 import session from "express-session";
 import cors from "cors";
 
@@ -36,9 +37,10 @@ app.use("/user/", userRoute);
 app.use("/mail/", mailRouter);
 app.use("/order/", orderRouter);
 app.use("/admin/", adminRouter);
+app.use("/product/", productRouter);
 
 app.get("/", (req, res) => {
-  res.send("Server is Running...." +  process.env.CLIENT_ORIGIN);
+  res.send("Server is Running...." + process.env.CLIENT_ORIGIN);
 });
 
 const port = process.env.PORT || 8000;

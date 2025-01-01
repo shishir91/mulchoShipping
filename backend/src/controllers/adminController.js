@@ -2,7 +2,8 @@ import userModel from "../models/userModel.js";
 import orderModel from "../models/orderModel.js";
 import MailController from "./mailController.js";
 import transactionModel from "../models/transactionModel.js";
-import productModel from '../models/productModel.js'
+import productModel from "../models/productModel.js";
+import { v2 as cloudinary } from "cloudinary";
 
 const mailController = new MailController();
 
@@ -293,10 +294,204 @@ export default class AdminController {
     }
   }
 
+  // PRODUCTSSSSS APISSS
   async addProduct(req, res) {
     try {
+      console.log("Request Body:", req.body);
+      console.log("Uploaded Files:", req.files);
+
+      // Configure Cloudinary
+      cloudinary.config({
+        cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+        api_key: process.env.CLOUDINARY_API_KEY,
+        api_secret: process.env.CLOUDINARY_API_SECRET,
+      });
+
+      // Upload all images to Cloudinary
+      const imageUploadPromises = req.files.map((file) =>
+        cloudinary.uploader.upload(file.path, {
+          folder: "products", // Optional: specify a folder in Cloudinary
+        })
+      );
+
+      const uploadResults = await Promise.all(imageUploadPromises);
+
+      // Extract URLs from Cloudinary upload results
+      const imageUrls = uploadResults.map((result) => result.secure_url);
+
+      // Save product data to the database
+      const newProduct = await productModel.create({
+        ...req.body,
+        images: imageUrls, // Store image URLs
+      });
+
+      return res.json({
+        success: true,
+        message: "New Product Added",
+        product: newProduct,
+      });
     } catch (error) {
-      return res.status(400).send(error);
+      console.error("Error adding product:", error);
+      return res.status(500).json({
+        success: false,
+        message: "Failed to add product",
+        error: error.message,
+      });
+    }
+  }
+
+  async editProduct(req, res) {
+    try {
+      const { id } = req.query;
+
+      // Find the product to edit
+      const existingProduct = await productModel.findById(id);
+
+      if (!existingProduct) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Product not found" });
+      }
+
+      // Configure Cloudinary
+      cloudinary.config({
+        cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+        api_key: process.env.CLOUDINARY_API_KEY,
+        api_secret: process.env.CLOUDINARY_API_SECRET,
+      });
+
+      // Handle new image uploads
+      let imageUrls = existingProduct.images; // Start with existing images
+      if (req.files && req.files.length > 0) {
+        // Upload new images to Cloudinary
+        const imageUploadPromises = req.files.map((file) =>
+          cloudinary.uploader.upload(file.path, {
+            folder: "products", // Optional folder name
+          })
+        );
+
+        const uploadResults = await Promise.all(imageUploadPromises);
+
+        // Extract URLs from Cloudinary responses
+        const newImageUrls = uploadResults.map((result) => result.secure_url);
+
+        // Optionally delete old images (if needed)
+        const imageDeletionPromises = existingProduct.images.map((imageUrl) => {
+          const publicId = imageUrl.split("/").slice(-1)[0].split(".")[0];
+          return cloudinary.uploader.destroy(`products/${publicId}`);
+        });
+
+        await Promise.all(imageDeletionPromises);
+
+        // Update image URLs with new ones
+        imageUrls = newImageUrls;
+      }
+
+      // Update product in the database
+      const updatedProduct = await productModel.findByIdAndUpdate(
+        id,
+        { ...req.body, images: imageUrls }, // Include updated images
+        { new: true } // Return the updated document
+      );
+
+      res.status(200).json({
+        success: true,
+        message: "Product Updated Successfully",
+        updatedProduct,
+      });
+    } catch (error) {
+      console.error("Error updating product:", error);
+      return res.status(500).json({
+        success: false,
+        message: "Failed to update product",
+        error: error.message,
+      });
+    }
+  }
+
+  async deleteProduct(req, res) {
+    try {
+      const { id } = req.query;
+
+      // Find the product to get image URLs
+      const product = await productModel.findById(id);
+
+      if (!product) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Product not found" });
+      }
+
+      // Configure Cloudinary
+      cloudinary.config({
+        cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+        api_key: process.env.CLOUDINARY_API_KEY,
+        api_secret: process.env.CLOUDINARY_API_SECRET,
+      });
+
+      // Delete images from Cloudinary
+      if (product.images && product.images.length > 0) {
+        const imageDeletionPromises = product.images.map((imageUrl) => {
+          const publicId = imageUrl.split("/").slice(-1)[0].split(".")[0]; // Extract public ID
+          return cloudinary.uploader.destroy(`products/${publicId}`); // Adjust folder name if needed
+        });
+
+        await Promise.all(imageDeletionPromises);
+      }
+
+      // Delete the product from the database
+      await productModel.findByIdAndDelete(id);
+
+      res.status(200).json({
+        success: true,
+        message: "Product Deleted Successfully",
+      });
+    } catch (error) {
+      console.error("Error deleting product:", error);
+      return res.status(500).json({ success: false, error: error.message });
+    }
+  }
+
+  async changeProductStatus(req, res) {
+    try {
+      const { id } = req.query;
+      const { status } = req.body;
+
+      // Validate the status
+      if (!["available", "out-of-stock"].includes(status)) {
+        return res.status(400).json({
+          success: false,
+          message:
+            "Invalid status. Status must be 'available' or 'out-of-stock'.",
+        });
+      }
+
+      // Find and update the product status
+      const updatedProduct = await productModel.findByIdAndUpdate(
+        id,
+        { status },
+        { new: true } // Return the updated document
+      );
+
+      if (!updatedProduct) {
+        return res.status(404).json({
+          success: false,
+          message: "Product not found.",
+        });
+      }
+
+      res.status(200).json({
+        success: true,
+        message: "Product status updated successfully.",
+        updatedProduct,
+      });
+    } catch (error) {
+      console.error("Error updating product status:", error);
+      return res.status(500).json({
+        success: false,
+        message: "Failed to update product status.",
+        error: error.message,
+      });
     }
   }
 }

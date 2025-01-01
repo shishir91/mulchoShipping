@@ -1,19 +1,27 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import img1 from "/images/logo.png";
+import img2 from "/images/laptopimage.png";
+import img3 from "/images/arrowImage.png";
+import work1 from "/images/work1.png";
+import work2 from "/images/work2.png";
+import work3 from "/images/work3.png";
+import work4 from "/images/work4.png";
+import registration from "/images/registration.png";
+import cart from "/images/cart.png";
+import ninePlus from "/images/9+.png";
+import { Facebook, Instagram, Linkedin, Send, Globe, Phone, Menu, X } from 'lucide-react';
 
-import {
-  ArrowRight,
-  DollarSign,
-  Clock,
-  BookOpen,
-  Facebook,
-  Twitter,
-  Instagram,
-  Linkedin,
-} from "lucide-react";
+
+import { useNavigate } from "react-router-dom";
 
 const HomePage = () => {
   const navigate = useNavigate();
+
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
 
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
@@ -24,240 +32,314 @@ const HomePage = () => {
   }, []);
 
   return (
-    <div className="mt-20 text-lg font-bold ">
-      HomePage is currently under development. You can Login / Register and view
-      other features
+    // <div className="mt-20 text-lg font-bold ">
+    //   HomePage is currently under development. You can Login / Register and view
+    //   other features
+    // </div>
+
+    <div className="min-h-screen bg-[#b7ebb9]" id="home">
+      {/* Navigation */}
+      <nav className="relative flex justify-between items-center p-2 bg-white">
+        <div className="flex items-center">
+          <img src={img1} alt="Logo" className="rounded-full h-14 pl-10" />
+          <span className="ml-2 font-semibold text-2xl text-gray-800">
+            Mulcho-Shipping
+          </span>
+        </div>
+
+        {/* Mobile Menu Button */}
+        <button
+          className="md:hidden px-2 py-1 mr-4"
+          onClick={toggleMenu}
+          aria-label="Toggle menu"
+        >
+          {isMenuOpen ? (
+            <X className="h-6 w-6 text-gray-700" />
+          ) : (
+            <Menu className="h-6 w-6 text-gray-700" />
+          )}
+        </button>
+
+        {/* Desktop Navigation */}
+        <div className="hidden md:flex items-center space-x-6">
+          <a
+            href="#home"
+            className="text-gray-700 font-semibold hover:text-gray-900"
+          >
+            HOME
+          </a>
+          <a
+            href="#about"
+            className="text-gray-700 font-semibold hover:text-gray-900"
+          >
+            ABOUT
+          </a>
+          <button onClick={()=>navigate("/register")} className="bg-emerald-500 font-semibold text-white px-4 py-2 rounded-3xl hover:bg-emerald-600">
+            GET STARTED
+          </button>
+          <button onClick={()=>navigate("/login")} className="bg-red-400 font-semibold text-white px-4 py-2 rounded-3xl hover:bg-red-500">
+            Log In
+          </button>
+        </div>
+
+        {/* Mobile Navigation */}
+        {isMenuOpen && (
+          <div className="absolute top-full left-0 right-0 bg-white md:hidden shadow-lg z-50">
+            <div className="flex flex-col items-center space-y-4 py-4">
+              <a
+                href="#pricing"
+                className="text-gray-700 font-semibold hover:text-gray-900"
+              >
+                PRICING
+              </a>
+              <a
+                href="#blog"
+                className="text-gray-700 font-semibold hover:text-gray-900"
+              >
+                BLOG
+              </a>
+              <a
+                href="#login"
+                className="text-gray-700 font-semibold hover:text-gray-900"
+              >
+                LOGIN
+              </a>
+              <button className="bg-emerald-500 font-semibold text-white px-4 py-2 rounded-3xl hover:bg-emerald-600 w-32">
+                GET STARTED
+              </button>
+              <button className="bg-red-400 font-semibold text-white px-4 py-2 rounded-3xl hover:bg-red-500 w-32">
+                Log In
+              </button>
+            </div>
+          </div>
+        )}
+      </nav>
+
+      {/* Main Content */}
+      <div className="container mx-auto px-1 py-5 md:py-24">
+        <div className="grid md:grid-cols-2 gap-8 items-center max-w-6xl mx-auto">
+          {/* Left Column - Text Content */}
+          <div className="space-y-1">
+            <div className="space-y-2">
+              <h1 className="text-4xl md:text-5xl font-bold text-gray-800 leading-tight">
+                From Side Hustle To
+              </h1>
+              <div className="flex items-center gap-3 pl-4">
+                <img src={img3} alt="Arrow" className="w-32 h-auto" />
+                <span className="text-4xl md:text-5xl font-bold text-gray-800">
+                  Full Time Income
+                </span>
+              </div>
+            </div>
+
+            <p className="text-xl font-semibold md:text-2xl  text-gray-700 max-w-lg leading-relaxed">
+              Be a part of Mulcho-Shipping Today And
+              <br />
+              Start Your Passive Income
+              <br />
+              At Your Own Fingertip.
+            </p>
+          </div>
+
+          {/* Right Column - Image */}
+          <div className="relative">
+            <img
+              src={img2}
+              alt="E-commerce Dashboard Preview"
+              className="rounded-3xl shadow-2xl w-full h-auto transform hover:scale-105 transition-transform duration-300"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="w-full bg-white py-16" id="about">
+        <div className="max-w-6xl mx-auto px-4">
+          {/* Title */}
+          <h2 className="text-4xl font-bold text-center text-gray-800 mb-16">
+            How does Mulcho Work?
+          </h2>
+
+          {/* Process Steps Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {/* Step 1 - Promote Products */}
+            <div className="flex flex-col items-center text-center space-y-1">
+              <div className="w-32 h-32 mb-2">
+                <img
+                  src={work1}
+                  alt="Promote Products"
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <h3 className="text-xl font-bold text-gray-800">
+                Promote Products
+              </h3>
+              <p className="text-md font-semibold text-[#B08D57]">
+                Advertise items in social platforms
+              </p>
+            </div>
+
+            {/* Step 2 - Order Confirmation */}
+            <div className="flex flex-col items-center text-center space-y-1">
+              <div className="w-32 h-32 mb-2">
+                <img
+                  src={work2}
+                  alt="Order Confirmation"
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <h3 className="text-xl font-bold text-gray-800">
+                Order Confirmation
+              </h3>
+              <p className="text-md font-semibold  text-[#B08D57]">
+                You receive orders
+              </p>
+            </div>
+
+            {/* Step 3 - We Deliver */}
+            <div className="flex flex-col items-center text-center space-y-1">
+              <div className="w-32 h-32 mb-2">
+                <img
+                  src={work3}
+                  alt="Fast Delivery"
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <h3 className="text-xl font-bold text-gray-800">We Deliver</h3>
+              <p className="text-md font-semibold text-[#B08D57]">
+                We deliver the product
+              </p>
+            </div>
+
+            {/* Step 4 - Commission */}
+            <div className="flex flex-col items-center text-center space-y-1">
+              <div className="w-32 h-32 mb-2">
+                <img
+                  src={work4}
+                  alt="Commission"
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <h3 className="text-xl font-bold text-gray-800">Commission</h3>
+              <p className="text-md font-semibold text-[#B08D57]">
+                You receive commission
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Statistics Section remains the same */}
+      <div className="bg-[#b7ebb9] py-24">
+        <div className="max-w-6xl mx-auto px-3">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Registration Stats */}
+            <div className="flex flex-col items-center text-center px-8">
+              <img
+                src={registration}
+                alt="Registrations"
+                className="w-20 h-20 mb-4"
+              />
+              <p className="text-lg font-semibold  text-gray-800">
+                "Over 50 registrations and counting—join us today!"
+              </p>
+            </div>
+
+            {/* Orders Stats */}
+            <div className="flex flex-col items-center text-center px-8">
+              <img src={cart} alt="Orders" className="w-20 h-20 mb-4" />
+              <p className="text-lg font-semibold text-gray-800">
+                Over 2,500 orders processed successfully and counting
+              </p>
+            </div>
+
+            {/* Brands Stats */}
+            <div className="flex flex-col items-center text-center px-8">
+              <img src={ninePlus} alt="Brands" className="w-28 h-24 mb-0" />
+              <p className="text-lg font-semibold text-gray-800">
+                Featuring a collection of over 9 top brands
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Call to Action Section */}
+      <div className="bg-white py-16">
+        <div className="max-w-4xl mx-auto px-4 text-center">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-8 leading-tight">
+            Join an elite group of 50+ marketers transforming their financial
+            future. With our platform, they maximize earnings, secure high
+            commissions, and achieve success faster than ever.
+          </h2>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className="bg-[#b7ebb9]  py-12">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Why Mulcho */}
+            <div>
+              <h3 className="font-bold text-xl mb-4">Why Mulcho?</h3>
+              <ul className="space-y-2">
+                <li>-Free Registration</li>
+                <li>-High Commission</li>
+                <li>-Time Flexibility</li>
+                <li>-Free Training</li>
+              </ul>
+            </div>
+
+            {/* Follow Us Section */}
+            <div className="flex flex-col ">
+              <h3 className="font-bold text-xl mb-4 ml-10">Follow Us</h3>
+              <div className="flex space-x-4">
+                <Facebook className="w-8 h-8 cursor-pointer hover:text-blue-600 transition-colors" />
+                <Instagram className="w-8 h-8 cursor-pointer hover:text-pink-600 transition-colors" />
+                <Linkedin className="w-8 h-8 cursor-pointer hover:text-blue-700 transition-colors" />
+                <svg
+                  className="w-8 h-8 cursor-pointer hover:text-black transition-colors"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
+                  <path d="M13 12V8a5 5 0 0 0 5-5" />
+                </svg>
+              </div>
+            </div>
+
+            {/* Know us & Support */}
+            <div>
+              <div className="mb-6">
+                <h3 className="font-bold text-xl mb-4">Know us</h3>
+                <div className="flex items-center space-x-2 mb-2">
+                  <Send className="w-5 h-5" />
+                  <span>mulcho456@gmail.com</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Globe className="w-5 h-5" />
+                  <span>www.mulcho-shipping.netlify.app</span>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="font-bold text-xl border-t-2 border-black mb-4">
+                  Support
+                </h3>
+                <div className="flex items-center space-x-2">
+                  <Phone className="w-5 h-5" />
+                  <span>9828890838, 9860648501</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
-
-  // return (
-  //   <div className="bg-gradient-to-br from-purple-100 to-indigo-100 min-h-screen font-sans">
-  //     <header className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-6 shadow-lg">
-  //       <div className="container mx-auto flex justify-between items-center">
-  //         <h1 className="text-3xl font-extrabold tracking-tight">Mulcho</h1>
-  //         <nav>
-  //           <ul className="flex space-x-6 text-lg">
-  //             <li>
-  //               <a
-  //                 href="#"
-  //                 className="hover:text-purple-200 transition duration-300"
-  //               >
-  //                 Home
-  //               </a>
-  //             </li>
-  //             <li>
-  //               <a
-  //                 href="#"
-  //                 className="hover:text-purple-200 transition duration-300"
-  //               >
-  //                 About
-  //               </a>
-  //             </li>
-  //             <li>
-  //               <a
-  //                 href="#"
-  //                 className="hover:text-purple-200 transition duration-300"
-  //               >
-  //                 Login
-  //               </a>
-  //             </li>
-  //           </ul>
-  //         </nav>
-  //       </div>
-  //     </header>
-
-  //     <main className="container mx-auto mt-12 px-4">
-  //       <section className="text-center mb-16">
-  //         <h2 className="text-5xl font-bold mb-6 text-indigo-800 leading-tight">
-  //           From Side Hustle to{" "}
-  //           <span className="text-purple-600">Full Time Income</span>
-  //         </h2>
-  //         <p className="text-2xl mb-8 text-gray-700">
-  //           Register at Mulcho and setup your own Passive income at your
-  //           fingertip.
-  //         </p>
-  //         <button className="bg-purple-600 text-white font-bold py-3 px-8 rounded-full text-lg hover:bg-purple-700 transition duration-300 transform hover:scale-105">
-  //           Get Started
-  //         </button>
-  //       </section>
-
-  //       <section className="bg-white rounded-2xl shadow-2xl p-8 mb-16 transform hover:scale-105 transition duration-500">
-  //         <h3 className="text-3xl font-semibold mb-6 text-indigo-800">
-  //           Be Part of an Effective Elite Group
-  //         </h3>
-  //         <p className="text-xl mb-6 text-gray-700 leading-relaxed">
-  //           "Be Part of an effective elite group of 50+ marketers transforming
-  //           their financial future! With our platform, they're maximizing their
-  //           earning, securing high commission and achieving success faster than
-  //           ever."
-  //         </p>
-  //         <p className="text-2xl font-bold text-purple-600">
-  //           Your success starts Today.
-  //         </p>
-  //       </section>
-
-  //       <section className="grid md:grid-cols-3 gap-8 mb-16">
-  //         {[
-  //           {
-  //             title: "50+",
-  //             description: "Registration",
-  //             icon: <ArrowRight className="w-12 h-12 text-purple-500 mb-4" />,
-  //           },
-  //           {
-  //             title: "P500+",
-  //             description: "Total Order Processed",
-  //             icon: <DollarSign className="w-12 h-12 text-indigo-500 mb-4" />,
-  //           },
-  //           {
-  //             title: "8+",
-  //             description: "Brand Collaboration",
-  //             icon: <Linkedin className="w-12 h-12 text-blue-500 mb-4" />,
-  //           },
-  //         ].map((item, index) => (
-  //           <div
-  //             key={index}
-  //             className="bg-white rounded-xl shadow-lg p-8 text-center transform hover:scale-105 transition duration-300"
-  //           >
-  //             {item.icon}
-  //             <h4 className="text-3xl font-bold mb-2 text-indigo-800">
-  //               {item.title}
-  //             </h4>
-  //             <p className="text-lg text-gray-600">{item.description}</p>
-  //           </div>
-  //         ))}
-  //       </section>
-
-  //       <section className="bg-gradient-to-r from-purple-500 to-indigo-500 rounded-2xl shadow-2xl p-8 mb-16 text-white">
-  //         <h3 className="text-3xl font-semibold mb-6">Why Mulcho?</h3>
-  //         <div className="grid md:grid-cols-2 gap-6">
-  //           {[
-  //             {
-  //               text: "Free Registration",
-  //               icon: <DollarSign className="w-8 h-8" />,
-  //             },
-  //             {
-  //               text: "High Commission",
-  //               icon: <ArrowRight className="w-8 h-8" />,
-  //             },
-  //             { text: "Time Flexibility", icon: <Clock className="w-8 h-8" /> },
-  //             { text: "Free Training", icon: <BookOpen className="w-8 h-8" /> },
-  //           ].map((item, index) => (
-  //             <div
-  //               key={index}
-  //               className="flex items-center space-x-4 bg-white bg-opacity-20 rounded-lg p-4"
-  //             >
-  //               {item.icon}
-  //               <span className="text-xl">{item.text}</span>
-  //             </div>
-  //           ))}
-  //         </div>
-  //       </section>
-  //     </main>
-
-  //     <footer className="bg-indigo-900 text-white py-12">
-  //       <div className="container mx-auto px-4">
-  //         <div className="grid md:grid-cols-4 gap-8 mb-8">
-  //           <div>
-  //             <h4 className="text-2xl font-bold mb-4">Mulcho</h4>
-  //             <p className="text-indigo-200">
-  //               Transforming side hustles into full-time success stories.
-  //             </p>
-  //           </div>
-  //           <div>
-  //             <h5 className="text-xl font-semibold mb-4">Quick Links</h5>
-  //             <ul className="space-y-2">
-  //               <li>
-  //                 <a
-  //                   href="#"
-  //                   className="text-indigo-200 hover:text-white transition duration-300"
-  //                 >
-  //                   Home
-  //                 </a>
-  //               </li>
-  //               <li>
-  //                 <a
-  //                   href="#"
-  //                   className="text-indigo-200 hover:text-white transition duration-300"
-  //                 >
-  //                   About Us
-  //                 </a>
-  //               </li>
-  //               <li>
-  //                 <a
-  //                   href="#"
-  //                   className="text-indigo-200 hover:text-white transition duration-300"
-  //                 >
-  //                   Services
-  //                 </a>
-  //               </li>
-  //               <li>
-  //                 <a
-  //                   href="#"
-  //                   className="text-indigo-200 hover:text-white transition duration-300"
-  //                 >
-  //                   Contact
-  //                 </a>
-  //               </li>
-  //             </ul>
-  //           </div>
-  //           <div>
-  //             <h5 className="text-xl font-semibold mb-4">Legal</h5>
-  //             <ul className="space-y-2">
-  //               <li>
-  //                 <a
-  //                   href="#"
-  //                   className="text-indigo-200 hover:text-white transition duration-300"
-  //                 >
-  //                   Terms of Service
-  //                 </a>
-  //               </li>
-  //               <li>
-  //                 <a
-  //                   href="#"
-  //                   className="text-indigo-200 hover:text-white transition duration-300"
-  //                 >
-  //                   Privacy Policy
-  //                 </a>
-  //               </li>
-  //             </ul>
-  //           </div>
-  //           <div>
-  //             <h5 className="text-xl font-semibold mb-4">Connect With Us</h5>
-  //             <div className="flex space-x-4">
-  //               <a
-  //                 href="#"
-  //                 className="text-indigo-200 hover:text-white transition duration-300"
-  //               >
-  //                 <Facebook />
-  //               </a>
-  //               <a
-  //                 href="#"
-  //                 className="text-indigo-200 hover:text-white transition duration-300"
-  //               >
-  //                 <Twitter />
-  //               </a>
-  //               <a
-  //                 href="#"
-  //                 className="text-indigo-200 hover:text-white transition duration-300"
-  //               >
-  //                 <Instagram />
-  //               </a>
-  //               <a
-  //                 href="#"
-  //                 className="text-indigo-200 hover:text-white transition duration-300"
-  //               >
-  //                 <Linkedin />
-  //               </a>
-  //             </div>
-  //           </div>
-  //         </div>
-  //         <div className="text-center text-indigo-200 border-t border-indigo-800 pt-8">
-  //           <p>&copy; 2024 Mulcho. All rights reserved.</p>
-  //         </div>
-  //       </div>
-  //     </footer>
-  //   </div>
-  // );
 };
 
 export default HomePage;

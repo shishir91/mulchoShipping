@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { type } from "os";
 
 const productModel = mongoose.Schema(
   {
@@ -18,18 +19,7 @@ const productModel = mongoose.Schema(
       type: String,
       required: true,
     },
-    images: [
-      {
-        url: {
-          type: String,
-          required: true,
-        },
-        publicId: {
-          type: String,
-          required: true,
-        },
-      },
-    ],
+    images: [{ type: String }],
     status: {
       type: String,
       enum: ["available", "out-of-stock"],
