@@ -26,6 +26,8 @@ import PaymentDetail from "./pages/PaymentDetail";
 import Products from "./pages/Products";
 import ProductDetail from "./pages/ProductDetail";
 import AddProduct from "./pages/AddProduct";
+import EditProduct from "./pages/EditProduct";
+import MyProducts from "./pages/MyProducts";
 
 // A Protected Route component
 const ProtectedRoute = ({ children }) => {
@@ -97,12 +99,34 @@ const App = () => {
           }
         />
         <Route
+          path="/myProducts"
+          element={
+            <ProtectedRoute>
+              <>
+                <Sidebar />
+                <MyProducts />
+              </>
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/productDetail"
           element={
             <ProtectedRoute>
               <>
                 <Sidebar />
                 <ProductDetail />
+              </>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/editProduct"
+          element={
+            <ProtectedRoute>
+              <>
+                <Sidebar />
+                <EditProduct />
               </>
             </ProtectedRoute>
           }

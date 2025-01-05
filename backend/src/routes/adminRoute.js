@@ -47,24 +47,6 @@ router.get("/users", adminMiddleware, adminController.fetchUsers);
 router.get("/orders", adminMiddleware, adminController.fetchOrders);
 router.get("/payments", adminMiddleware, adminController.getAllPayments);
 
-router.put("/products", adminMiddleware, adminController.editProduct);
-router.delete("/products", adminMiddleware, adminController.deleteProduct);
-router.post(
-  "/changeProductStatus",
-  adminMiddleware,
-  adminController.changeProductStatus
-);
-router.post(
-  "/addProduct",
-  adminMiddleware,
-  upload.array("productImages", 5), // Matches "productImages" from frontend
-  (req, res) => {
-    console.log("Request fields:", req.body); // Logs additional form data
-    console.log("Request files:", req.files); // Logs uploaded files
-    adminController.addProduct(req, res);
-  }
-);
-
 router.put(
   "/userStatus/:userId",
   adminMiddleware,
@@ -76,5 +58,27 @@ router.put(
   adminMiddleware,
   adminController.changeOrderStatus
 );
+
+// Products Routes
+router.post(
+  "/addProduct",
+  adminMiddleware,
+  upload.array("productImages", 5),
+  (req, res) => {
+    adminController.addProduct(req, res);
+  }
+);
+router.put(
+  "/editProduct",
+  adminMiddleware,
+  upload.array("productImages", 5),
+  adminController.editProduct
+);
+router.post(
+  "/changeProductStatus",
+  adminMiddleware,
+  adminController.changeProductStatus
+);
+router.delete("/products", adminMiddleware, adminController.deleteProduct);
 
 export default router;

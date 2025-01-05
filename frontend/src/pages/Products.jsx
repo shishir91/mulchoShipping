@@ -8,6 +8,7 @@ import {
   Pencil,
   SlidersHorizontal,
   Trash2,
+  ShoppingCart,
 } from "lucide-react";
 import api from "../api/config.js";
 import { ToastContainer, toast } from "react-toastify";
@@ -100,7 +101,32 @@ const Products = () => {
       setIsLoading(false);
       console.log(e);
       setShowModal(false);
-      toast.error(e, {
+      toast.error(e.message, {
+        autoClose: 2000,
+        theme: "colored",
+      });
+    }
+  };
+
+  const handelAddMyProduct = async (productId) => {
+    try {
+      setIsLoading(true);
+      const response = await api.put(`/product/addMyProduct?id=${productId}`, {
+        headers: { token },
+      });
+      setIsLoading(false);
+      console.log(response);
+      if (response.data.success) {
+        toast.success(response.data.message, {
+          autoClose: 1000,
+          theme: "colored",
+          onClose: () => navigate("/myProducts"),
+        });
+      }
+    } catch (e) {
+      setIsLoading(false);
+      console.log(e);
+      toast.error(e.message, {
         autoClose: 2000,
         theme: "colored",
       });
@@ -118,13 +144,21 @@ const Products = () => {
             <ShoppingBag className="h-8 w-8 text-blue-500 mr-3" />
             Products
           </h2>
-          {user.role == "admin" && (
+          {user.role == "admin" ? (
             <button
               onClick={() => navigate("/addProduct")}
               className="bg-blue-500 text-white py-2 px-4 rounded-md flex items-center hover:bg-blue-600"
             >
               <Plus className="h-5 w-5 mr-3 " />
               Add Product
+            </button>
+          ) : (
+            <button
+              onClick={() => navigate("/myProducts")}
+              className="bg-blue-500 text-white py-2 px-4 rounded-md flex items-center hover:bg-blue-600"
+            >
+              <ShoppingCart className="h-5 w-5 mr-3 " />
+              My Products
             </button>
           )}
         </div>
@@ -147,7 +181,9 @@ const Products = () => {
                         <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
                           <button
                             className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-200 flex items-center"
-                            onClick={() => navigate("/editProduct")}
+                            onClick={() =>
+                              navigate("/editProduct", { state: { product } })
+                            }
                           >
                             <Pencil className="h-5 w-5 mr-2 text-gray-500" />
                             Edit Product
@@ -204,7 +240,20 @@ const Products = () => {
                   <HandCoins className="h-5 w-5 text-gray-400 mr-2" /> Rs.{" "}
                   {product.commission}
                 </p>
-                <button className="w-full bg-blue-500 text-white py-2 rounded-md flex items-center justify-center hover:bg-blue-600">
+                {user.role == "user" && (
+                  <button
+                    onClick={() => handelAddMyProduct(product._id)}
+                    className="w-full bg-green-700 mb-1 text-white py-2 rounded-md flex items-center justify-center hover:bg-green-900"
+                  >
+                    Add to My Product
+                  </button>
+                )}
+                <button
+                  onClick={() =>
+                    navigate(`/productDetail?productId=${product._id}`)
+                  }
+                  className="w-full bg-blue-500 text-white py-2 rounded-md flex items-center justify-center hover:bg-blue-600"
+                >
                   View Details
                 </button>
               </div>

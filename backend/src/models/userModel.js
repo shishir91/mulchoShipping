@@ -19,6 +19,12 @@ const userModel = mongoose.Schema(
     isEmailVerified: { type: Boolean, required: true, default: false },
     isUserVerified: { type: Boolean, required: true, default: false },
     otp: { type: String },
+    myProducts: [
+      {
+        type: mongoose.Schema.Types.ObjectId, // Reference to Product model
+        ref: "Product",
+      },
+    ],
   },
   {
     timestamps: true,
