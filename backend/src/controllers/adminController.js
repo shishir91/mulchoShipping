@@ -8,22 +8,7 @@ import { v2 as cloudinary } from "cloudinary";
 const mailController = new MailController();
 
 export default class AdminController {
-  async fetchSingleOrder(req, res) {
-    try {
-      // Find all users where role is 'user'
-      const { orderId } = req.params;
-
-      const order = await orderModel
-        .findById(orderId)
-        .populate("orderFrom", "name");
-
-      // Respond with the list of orders
-      res.status(200).json({ success: true, order });
-    } catch (error) {
-      res.status(400).json({ message: "Error fetching order", error });
-    }
-  }
-
+  //USERS APISSSS
   async fetchSingleUser(req, res) {
     try {
       // Find all users where role is 'user'
@@ -47,76 +32,6 @@ export default class AdminController {
       res.status(200).json({ success: true, users });
     } catch (error) {
       res.status(400).json({ message: "Error fetching users", error });
-    }
-  }
-
-  async fetchOrders(req, res) {
-    try {
-      const orders = await orderModel.find().populate("orderFrom", "name");
-
-      res.status(200).json({ success: true, orders });
-    } catch (error) {
-      res.status(400).json({ message: "Error fetching orders", error });
-    }
-  }
-
-  async changeOrderStatus(req, res) {
-    try {
-      const { orderId, status, amount } = req.body;
-
-      let updatedOrder = await orderModel.findByIdAndUpdate(orderId, {
-        status,
-      });
-      console.log(updatedOrder);
-      updatedOrder = await orderModel
-        .findById(orderId)
-        .populate("orderFrom", "-password -otp");
-      console.log(updatedOrder);
-      console.log(updatedOrder.orderFrom[0].email);
-      const response = await mailController.notifyUserAboutOrders(
-        updatedOrder.orderFrom[0].email,
-        `Your order for ${updatedOrder.productName} is ${updatedOrder.status}`
-      );
-      console.log(response);
-
-      let transaction;
-      if (updatedOrder.status === "delivered") {
-        transaction = await transactionModel.create({
-          to: updatedOrder.orderFrom,
-          source: updatedOrder,
-          amount,
-        });
-      }
-
-      if (response) {
-        if (transaction) {
-          return res.json({
-            success: true,
-            message: `Order status changed to ${status}`,
-            message2: "And email also sent",
-            message3: "Transaction Created",
-            updatedOrder,
-            transaction,
-          });
-        }
-        return res.json({
-          success: true,
-          message: `Order status changed to ${status}`,
-          message2: "And email also sent",
-          updatedOrder,
-        });
-      } else {
-        return res.json({
-          success: false,
-          message: `Order status changed to ${status}`,
-          message2: "But failed to send email",
-          updatedOrder,
-        });
-      }
-    } catch (error) {
-      return res
-        .status(400)
-        .json({ message: "Error changing order's status", error });
     }
   }
 
@@ -281,6 +196,98 @@ export default class AdminController {
     }
   }
 
+  // ORDERS APISSS
+  async fetchOrders(req, res) {
+    try {
+      const orders = await orderModel
+        .find()
+        .populate("orderFrom", "name")
+        .populate("product", "productName");
+
+      res.status(200).json({ success: true, orders });
+    } catch (error) {
+      res.status(400).json({ message: "Error fetching orders", error });
+    }
+  }
+
+  async fetchSingleOrder(req, res) {
+    try {
+      // Find all users where role is 'user'
+      const { orderId } = req.params;
+
+      const order = await orderModel
+        .findById(orderId)
+        .populate("orderFrom", "name")
+        .populate("product", "productName");
+
+      // Respond with the list of orders
+      res.status(200).json({ success: true, order });
+    } catch (error) {
+      res.status(400).json({ message: "Error fetching order", error });
+    }
+  }
+
+  async changeOrderStatus(req, res) {
+    try {
+      const { orderId, status, amount } = req.body;
+
+      let updatedOrder = await orderModel.findByIdAndUpdate(orderId, {
+        status,
+      });
+      console.log(updatedOrder);
+      updatedOrder = await orderModel
+        .findById(orderId)
+        .populate("orderFrom", "-password -otp");
+      console.log(updatedOrder);
+      console.log(updatedOrder.orderFrom[0].email);
+      const response = await mailController.notifyUserAboutOrders(
+        updatedOrder.orderFrom[0].email,
+        `Your order for ${updatedOrder.productName} is ${updatedOrder.status}`
+      );
+      console.log(response);
+
+      let transaction;
+      if (updatedOrder.status === "delivered") {
+        transaction = await transactionModel.create({
+          to: updatedOrder.orderFrom,
+          source: updatedOrder,
+          amount,
+        });
+      }
+
+      if (response) {
+        if (transaction) {
+          return res.json({
+            success: true,
+            message: `Order status changed to ${status}`,
+            message2: "And email also sent",
+            message3: "Transaction Created",
+            updatedOrder,
+            transaction,
+          });
+        }
+        return res.json({
+          success: true,
+          message: `Order status changed to ${status}`,
+          message2: "And email also sent",
+          updatedOrder,
+        });
+      } else {
+        return res.json({
+          success: false,
+          message: `Order status changed to ${status}`,
+          message2: "But failed to send email",
+          updatedOrder,
+        });
+      }
+    } catch (error) {
+      return res
+        .status(400)
+        .json({ message: "Error changing order's status", error });
+    }
+  }
+
+  //PAYMENT APISSS
   async getAllPayments(req, res) {
     try {
       const payments = await transactionModel

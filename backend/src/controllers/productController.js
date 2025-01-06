@@ -43,7 +43,7 @@ export default class ProductController {
   }
 
   async addMyProduct(req, res) {
-    const { id } = req.body;
+    const { id } = req.query;
     try {
       const product = await productModel.findById(id);
       if (!product) {
@@ -55,7 +55,7 @@ export default class ProductController {
       const user = await userModel
         .findByIdAndUpdate(
           req.user,
-          { $addToSet: { myProducts: productId } },
+          { $addToSet: { myProducts: id } },
           { new: true }
         )
         .populate("myProducts");
@@ -69,7 +69,7 @@ export default class ProductController {
   }
 
   async removeMyProduct(req, res) {
-    const { id } = req.body;
+    const { id } = req.query;
 
     try {
       const user = await userModel.findByIdAndUpdate(

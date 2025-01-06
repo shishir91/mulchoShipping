@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import {
@@ -18,8 +18,9 @@ const AddOrder = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [myProducts, setMyProducts] = useState([]);
   const [formData, setFormData] = useState({
-    productName: "",
+    product: "",
     qty: "",
     price: "",
     customerName: "",
@@ -27,6 +28,28 @@ const AddOrder = () => {
     customerLocation: "",
     remarks: "",
   });
+
+  useEffect(() => {
+    const getMyProducts = async () => {
+      try {
+        const response = await api.get("/product/getMyProduct", {
+          headers: { token },
+        });
+        if (response.data.success) {
+          console.log(response);
+
+          setMyProducts(response.data.myProducts);
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error(error.message, {
+          autoClose: 2000,
+          theme: "colored",
+        });
+      }
+    };
+    getMyProducts();
+  }, []);
 
   // Handle change in input fields
   const handleChange = (e) => {
@@ -93,15 +116,21 @@ const AddOrder = () => {
             <label className="block text-gray-700">Product Name</label>
             <div className="flex items-center border border-gray-300 rounded-md p-2">
               <TagIcon className="h-5 w-5 text-gray-400 mr-2" />
-              <input
-                type="text"
-                name="productName"
-                value={formData.productName}
+              <select
+                name="product"
                 onChange={handleChange}
                 required
                 className="w-full p-1 outline-none"
-                placeholder="Enter product name"
-              />
+              >
+                <option selected disabled>
+                  ---Select Product---
+                </option>
+                {myProducts.map((product) => (
+                  <option key={product._id} value={product._id}>
+                    {product.productName}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 

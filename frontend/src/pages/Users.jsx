@@ -55,7 +55,7 @@ const Users = () => {
     <div className="p-4 sm:ml-64 mt-4">
       <h2 className="text-2xl font-semibold mb-4">Users List</h2>
       {/* Status Tabs */}
-      <div className="flex space-x-4 mb-4">
+      <div className="flex flex-wrap md:flex-nowrap space-x-2 mb-4 overflow-x-auto scrollbar-hide">
         {[
           { name: "All USERS", id: "all" },
           { name: "VERIFIED", id: "verified" },
@@ -66,7 +66,7 @@ const Users = () => {
           <button
             onClick={() => navigate(`/users?users=${status.id}`)}
             key={index}
-            className={`p-2 px-4 rounded-md text-sm ${
+            className={`p-2 px-4 mb-2 rounded-md text-sm whitespace-nowrap ${
               userStatus
                 ? status.id == userStatus
                   ? "bg-teal-700 text-white"
@@ -80,6 +80,7 @@ const Users = () => {
           </button>
         ))}
       </div>
+
       <div className="bg-white shadow-md rounded-lg p-4">
         <ul>
           {!userStatus || userStatus == "all"

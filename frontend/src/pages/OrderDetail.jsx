@@ -37,7 +37,7 @@ const OrderDetail = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div className="bg-gray-50 p-4 rounded-lg shadow">
             <p className="font-semibold text-gray-700">Product Name:</p>
-            <p className="text-gray-500">{order.productName}</p>
+            <p className="text-gray-500">{order.product[0].productName}</p>
           </div>
           <div className="bg-gray-50 p-4 rounded-lg shadow">
             <p className="font-semibold text-gray-700">Quantity:</p>

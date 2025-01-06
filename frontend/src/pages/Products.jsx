@@ -111,9 +111,13 @@ const Products = () => {
   const handelAddMyProduct = async (productId) => {
     try {
       setIsLoading(true);
-      const response = await api.put(`/product/addMyProduct?id=${productId}`, {
-        headers: { token },
-      });
+      const response = await api.put(
+        `/product/addMyProduct?id=${productId}`,
+        {},
+        {
+          headers: { token },
+        }
+      );
       setIsLoading(false);
       console.log(response);
       if (response.data.success) {

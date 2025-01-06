@@ -8,7 +8,8 @@ export default class OrderController {
       const { orderId } = req.params;
       const order = await orderModel
         .findById(orderId)
-        .populate("orderFrom", "name");
+        .populate("orderFrom", "name")
+        .populate("product", "productName");
       if (order) {
         res.json({ success: true, order });
       } else {
@@ -20,6 +21,11 @@ export default class OrderController {
   }
 
   async addOrder(req, res) {
+    console.log(req.body);
+    if (req.body.product == "") {
+      return res.json({ success: false, message: "Product not selected" });
+    }
+
     if (!req.user.isUserVerified) {
       return res.json({
         success: false,
@@ -57,8 +63,10 @@ export default class OrderController {
     //   });
     // }
     try {
-      let myOrders = await orderModel.find({ orderFrom: req.user });
-      console.log(myOrders.length);
+      let myOrders = await orderModel
+        .find({ orderFrom: req.user })
+        .populate("product", "productName");
+      console.log(myOrders);
       if (myOrders.length < 1) {
         res.json({
           success: false,

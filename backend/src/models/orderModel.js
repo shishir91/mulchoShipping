@@ -2,7 +2,12 @@ import mongoose from "mongoose";
 
 const orderModel = mongoose.Schema(
   {
-    productName: { type: String, required: true },
+    product: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product",
+      },
+    ],
     qty: { type: String, required: true },
     price: { type: String, required: true },
     customerName: { type: String, required: true },

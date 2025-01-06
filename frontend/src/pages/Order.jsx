@@ -56,6 +56,8 @@ const Order = () => {
       headers: { token },
     });
     if (response.data.success) {
+      console.log(response);
+
       setUserOrders(response.data.orders);
     }
   };
@@ -183,12 +185,12 @@ const Order = () => {
         </div>
 
         {/* Status Tabs */}
-        <div className="flex space-x-4 mb-4">
+        <div className="flex flex-wrap md:flex-nowrap space-x-2 mb-4 overflow-x-auto scrollbar-hide">
           {allStatus.map((status, index) => (
             <button
               onClick={() => navigate(`/orders?order=${status.id}`)}
               key={index}
-              className={`p-2 px-4 rounded-md text-sm ${
+              className={`p-2 px-4 mb-2 rounded-md text-sm whitespace-nowrap ${
                 order
                   ? status.id == order
                     ? "bg-teal-700 text-white"
@@ -206,7 +208,7 @@ const Order = () => {
             user.isUserVerified && (
               <button
                 onClick={() => navigate("/addOrder")}
-                className={"p-2 px-4 rounded-md text-sm bg-blue-500 text-white"}
+                className="p-2 px-4 rounded-md text-sm bg-blue-500 text-white whitespace-nowrap"
               >
                 Add New Order
               </button>
@@ -258,7 +260,7 @@ const Order = () => {
                           {new Date(ord.createdAt).toISOString().split("T")[0]}
                         </td>
                         <td className="p-2 border-b border-gray-300">
-                          {ord.productName}
+                          {ord.product[0].productName}
                         </td>
                         <td className="p-2 border-b border-gray-300">
                           {ord.qty}
@@ -305,7 +307,7 @@ const Order = () => {
                           {new Date(ord.createdAt).toISOString().split("T")[0]}
                         </td>
                         <td className="p-2 border-b border-gray-300">
-                          {ord.productName}
+                          {ord.product[0].productName}
                         </td>
                         <td className="p-2 border-b border-gray-300">
                           {ord.qty}

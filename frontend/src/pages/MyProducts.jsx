@@ -20,7 +20,7 @@ const MyProducts = () => {
           headers: { token },
         });
         if (response.data.success) {
-          setProducts(response.data.products);
+          setProducts(response.data.myProducts);
         }
       } catch (error) {
         console.error("Error fetching products:", error);
