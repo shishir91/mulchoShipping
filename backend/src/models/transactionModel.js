@@ -15,7 +15,6 @@ const transactionModel = mongoose.Schema(
         unique: true,
       },
     ],
-    amount: { type: String },
     status: { type: String, default: "pending" },
     proof: { type: String },
   },

@@ -10,6 +10,7 @@ const orderModel = mongoose.Schema(
     ],
     qty: { type: String, required: true },
     price: { type: String, required: true },
+    commission: { type: String, required: true },
     customerName: { type: String, required: true },
     customerPhone: { type: String, required: true },
     customerLocation: { type: String, required: true },

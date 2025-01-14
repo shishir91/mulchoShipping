@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
+import { HandCoins } from "lucide-react";
 import {
   ShoppingCartIcon,
   UserIcon,
@@ -19,6 +20,7 @@ const AddOrder = () => {
   const token = localStorage.getItem("token");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [myProducts, setMyProducts] = useState([]);
+  const [commission, setCommission] = useState(0);
   const [formData, setFormData] = useState({
     product: "",
     qty: "",
@@ -29,6 +31,7 @@ const AddOrder = () => {
     remarks: "",
   });
 
+  //get my products
   useEffect(() => {
     const getMyProducts = async () => {
       try {
@@ -50,6 +53,24 @@ const AddOrder = () => {
     };
     getMyProducts();
   }, []);
+
+  // onchange selected product set commission
+  useEffect(() => {
+    const selectedProduct = myProducts.find(
+      (product) => product._id === formData.product
+    );
+
+    if (selectedProduct) {
+      if (formData.price) {
+        let pPrice = Number(selectedProduct.price);
+        let oPrice = Number(formData.price);
+        let x = oPrice - pPrice;
+        setCommission(Number(selectedProduct.commission) + x);
+      } else {
+        setCommission(selectedProduct.commission);
+      }
+    }
+  }, [formData.product, formData.price, myProducts]);
 
   // Handle change in input fields
   const handleChange = (e) => {
@@ -131,6 +152,20 @@ const AddOrder = () => {
                   </option>
                 ))}
               </select>
+            </div>
+          </div>
+
+          {/* Commission */}
+          <div className="mb-4">
+            <label className="block text-gray-700">Commission</label>
+            <div className="flex items-center border border-gray-300 rounded-md p-2">
+              <HandCoins className="h-5 w-5 text-gray-400 mr-2" />
+              <input
+                type="number"
+                value={commission}
+                className="w-full p-1 outline-none"
+                disabled
+              />
             </div>
           </div>
 

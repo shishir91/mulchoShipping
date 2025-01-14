@@ -1,6 +1,7 @@
 import path from "path";
 import orderModel from "../models/orderModel.js";
 import userModel from "../models/userModel.js";
+import productModel from "../models/productModel.js";
 
 export default class OrderController {
   async getOrderDetail(req, res) {
@@ -21,7 +22,6 @@ export default class OrderController {
   }
 
   async addOrder(req, res) {
-    console.log(req.body);
     if (req.body.product == "") {
       return res.json({ success: false, message: "Product not selected" });
     }
@@ -38,14 +38,28 @@ export default class OrderController {
       });
     }
     try {
+      const product = await productModel.findById(req.body.product);
+      let pPrice = Number(product.price);
+      let oPrice = Number(req.body.price);
+      if (oPrice < pPrice - Number(product.commission)) {
+        return res.json({
+          success: false,
+          message:
+            "You cannot set order price less than (Product Price - Commission)",
+        });
+      }
+      let x = oPrice - pPrice;
+
+      let commission = Number(product.commission) + x;
+
       let newOrder = await orderModel.create({
         ...req.body,
         orderFrom: req.user,
+        commission,
       });
-      console.log(newOrder);
       newOrder = await orderModel.populate(newOrder, {
-        path: "orderFrom",
-        select: "-password",
+        path: "orderFrom product",
+        select: "-password -otp",
       });
       res.json({ success: true, newOrder, message: "New Order Added" });
     } catch (error) {

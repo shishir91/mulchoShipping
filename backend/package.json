@@ -4,7 +4,8 @@
   "main": "src/index.js",
   "type": "module",
   "scripts": {
-    "start": "nodemon ."
+    "start": "node .",
+    "dev": "nodemon ."
   },
   "license": "MIT",
   "dependencies": {

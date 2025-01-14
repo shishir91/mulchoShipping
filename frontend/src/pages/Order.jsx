@@ -10,7 +10,6 @@ const Order = () => {
   const [isLoading, setIsLoading] = useState(false);
   const hasFetched = useRef(false);
   const navigate = useNavigate();
-  const [commissionAmount, setCommissionAmmount] = useState();
   const [showModal, setShowModal] = useState(false);
   const [modelStatus, setModelStatus] = useState("");
   const [cancelOrderId, setCancelOrderId] = useState();
@@ -208,7 +207,7 @@ const Order = () => {
             user.isUserVerified && (
               <button
                 onClick={() => navigate("/addOrder")}
-                className="p-2 px-4 rounded-md text-sm bg-blue-500 text-white whitespace-nowrap"
+                className="px-4 rounded-md text-sm bg-blue-500 text-white whitespace-nowrap"
               >
                 Add New Order
               </button>
@@ -411,21 +410,12 @@ const Order = () => {
                         .map((status) => (
                           <li
                             key={status.id}
-                            onClick={
-                              status.id == "delivered"
-                                ? (e) => {
-                                    setModelStatus("delivered");
-                                    setContextMenu(null);
-                                    e.stopPropagation();
-                                    setShowModal(true);
-                                    setCancelOrderId(contextMenu.orderId);
-                                  }
-                                : () =>
-                                    handleStatusChange(
-                                      status.id,
-                                      contextMenu.orderId
-                                    )
-                            }
+                            onClick={() => {
+                              handleStatusChange(
+                                status.id,
+                                contextMenu.orderId
+                              );
+                            }}
                             className="cursor-pointer hover:bg-gray-200 p-2"
                           >
                             {status.name}
@@ -451,66 +441,30 @@ const Order = () => {
           )}
 
           {/* Modal */}
-          {showModal &&
-            (modelStatus == "canceled" ? (
-              <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
-                <div className="bg-white rounded-lg p-6 w-full max-w-lg mx-auto shadow-lg">
-                  <h2 className="text-xl font-semibold mb-4">Cancel Order</h2>
-                  <p className="text-gray-600 mb-2">
-                    Are you sure you want to cancel this order?
-                  </p>
-                  <div className="flex justify-end mt-4">
-                    <button
-                      onClick={() => setShowModal(false)} // Close modal
-                      className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-lg mr-2"
-                    >
-                      No
-                    </button>
-                    <button
-                      onClick={() => handleCancelOrder(cancelOrderId)}
-                      className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg"
-                    >
-                      Yes
-                    </button>
-                  </div>
+          {showModal && modelStatus == "canceled" && (
+            <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
+              <div className="bg-white rounded-lg p-6 w-full max-w-lg mx-auto shadow-lg">
+                <h2 className="text-xl font-semibold mb-4">Cancel Order</h2>
+                <p className="text-gray-600 mb-2">
+                  Are you sure you want to cancel this order?
+                </p>
+                <div className="flex justify-end mt-4">
+                  <button
+                    onClick={() => setShowModal(false)} // Close modal
+                    className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-lg mr-2"
+                  >
+                    No
+                  </button>
+                  <button
+                    onClick={() => handleCancelOrder(cancelOrderId)}
+                    className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg"
+                  >
+                    Yes
+                  </button>
                 </div>
               </div>
-            ) : (
-              <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
-                <div className="bg-white rounded-lg p-6 w-full max-w-lg mx-auto shadow-lg">
-                  <h2 className="text-xl font-semibold mb-4">Item Delivered</h2>
-                  <p className="text-gray-600 mb-2">
-                    Enter commission amount for this product :
-                  </p>
-                  <input
-                    type="number"
-                    className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    value={commissionAmount}
-                    onChange={(e) => setCommissionAmmount(e.target.value)}
-                  />
-                  <div className="flex justify-end mt-4">
-                    <button
-                      onClick={() => setShowModal(false)} // Close modal
-                      className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-lg mr-2"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleStatusChange(
-                          modelStatus,
-                          cancelOrderId,
-                          commissionAmount
-                        )
-                      }
-                      className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg"
-                    >
-                      Confirm Delivery
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

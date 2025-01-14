@@ -19,8 +19,8 @@ const Products = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [modelStatus, setModelStatus] = useState("");
   const [modelProductId, setModelProductId] = useState();
+  const [modelStatus, setModelStatus] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const token = localStorage.getItem("token");
   const user = JSON.parse(localStorage.getItem("userInfo"));
