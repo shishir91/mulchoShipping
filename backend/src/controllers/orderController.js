@@ -10,7 +10,7 @@ export default class OrderController {
       const order = await orderModel
         .findById(orderId)
         .populate("orderFrom", "name")
-        .populate("product", "productName");
+        .populate("product");
       if (order) {
         res.json({ success: true, order });
       } else {

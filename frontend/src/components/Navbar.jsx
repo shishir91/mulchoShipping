@@ -10,7 +10,7 @@ import {
   MenuItem,
   Drawer,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "/images/logo.png";
 import {
   Disclosure,
@@ -72,12 +72,12 @@ function Navbar() {
   return (
     <div className="sticky top-0">
       {user && token ? (
-        <Disclosure as="nav" className="bg-gray-900">
-          <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8 ">
+        <Disclosure as="nav" className="bg-blue-200">
+          <div className="max-w-8xl px-2 sm:px-6 lg:px-8 ">
             <div className="relative flex h-16 items-center justify-between">
               <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
                 {/* Mobile menu button*/}
-                <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+                <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md p-2 text-gray-800 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
                   <span className="absolute -inset-0.5" />
                   <span className="sr-only">Open main menu</span>
                   <Bars3Icon
@@ -92,8 +92,8 @@ function Navbar() {
               </div>
               <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                 <div className="flex flex-shrink-0 items-center">
-                  <img alt="MulCho" src={logo} className="h-20 w-auto" />
-                  <span className=" text-3xl font-bold text-gray-200">
+                  <img alt="MulCho" src={logo} className="h-16 w-auto" />
+                  <span className=" text-3xl font-bold text-gray-900">
                     MulCho
                   </span>
                 </div>
@@ -127,7 +127,7 @@ function Navbar() {
                     <mItem>
                       <a
                         href="#"
-                        className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-200"
+                        className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-200 hover:bg-gray-100"
                       >
                         Your Profile
                       </a>
@@ -136,7 +136,7 @@ function Navbar() {
                       <></>
                     ) : user.status == "underReview" ? (
                       <mItem>
-                        <a className="block px-4 py-2 text-sm bg-green-500 text-white-700">
+                        <a className="block px-4 py-2 text-sm bg-green-500 text-white-700 ">
                           Your Account Is Under Review. You will be notify soon
                           once its done.
                         </a>
@@ -149,7 +149,7 @@ function Navbar() {
                               ? "/userVerification"
                               : "/emailVerification"
                           }
-                          className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-200"
+                          className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-200 hover:bg-gray-100"
                         >
                           Verify your account
                         </a>
@@ -159,7 +159,7 @@ function Navbar() {
                       <a
                         href="/"
                         onClick={logoutHandler}
-                        className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-200"
+                        className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-200 hover:bg-gray-100"
                       >
                         Log out
                       </a>
@@ -178,7 +178,7 @@ function Navbar() {
                   as="a"
                   href={item.href}
                   aria-current={item.current ? "page" : undefined}
-                  className="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
+                  className="text-gray-800 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
                 >
                   {item.name}
                 </DisclosureButton>
@@ -187,7 +187,7 @@ function Navbar() {
                 <DisclosureButton
                   as="a"
                   href="/payment"
-                  className="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
+                  className="text-gray-800 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
                 >
                   Payment
                 </DisclosureButton>
@@ -195,7 +195,7 @@ function Navbar() {
                 <DisclosureButton
                   as="a"
                   href="/income"
-                  className="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
+                  className="text-gray-800 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
                 >
                   My Income
                 </DisclosureButton>
@@ -204,7 +204,7 @@ function Navbar() {
                 <DisclosureButton
                   as="a"
                   href="/users"
-                  className="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
+                  className="text-gray-800 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
                 >
                   Users
                 </DisclosureButton>
@@ -260,7 +260,7 @@ function Navbar() {
                 >
                   <img
                     src={logo}
-                    className="h-20 w-auto"
+                    className="h-14 w-auto"
                     alt="logo of MulCho"
                   />
                   <span className="text-2xl font-bold text-gray-800">
@@ -270,19 +270,19 @@ function Navbar() {
 
                 <Box sx={{ display: { xs: "none", md: "flex" } }}>
                   <MenuItem
-                    onClick={() => scrollToSection("features")}
+                    onClick={() => scrollToSection("home")}
                     sx={{ py: "6px", px: "12px" }}
                   >
                     <Typography variant="body2" color="text.primary">
-                      Features
+                      Home
                     </Typography>
                   </MenuItem>
                   <MenuItem
-                    onClick={() => scrollToSection("testimonials")}
+                    onClick={() => scrollToSection("about")}
                     sx={{ py: "6px", px: "12px" }}
                   >
                     <Typography variant="body2" color="text.primary">
-                      Testimonials
+                      About
                     </Typography>
                   </MenuItem>
                   <MenuItem
@@ -294,19 +294,11 @@ function Navbar() {
                     </Typography>
                   </MenuItem>
                   <MenuItem
-                    onClick={() => scrollToSection("pricing")}
+                    onClick={() => scrollToSection("contact")}
                     sx={{ py: "6px", px: "12px" }}
                   >
                     <Typography variant="body2" color="text.primary">
-                      Pricing
-                    </Typography>
-                  </MenuItem>
-                  <MenuItem
-                    onClick={() => scrollToSection("faq")}
-                    sx={{ py: "6px", px: "12px" }}
-                  >
-                    <Typography variant="body2" color="text.primary">
-                      FAQ
+                      Contact
                     </Typography>
                   </MenuItem>
                 </Box>
@@ -368,43 +360,38 @@ function Navbar() {
                         flexGrow: 1,
                       }}
                     ></Box>
-                    <MenuItem onClick={() => scrollToSection("features")}>
-                      Features
+                    <MenuItem onClick={() => scrollToSection("home")}>
+                      Home
                     </MenuItem>
-                    <MenuItem onClick={() => scrollToSection("testimonials")}>
-                      Testimonials
+                    <MenuItem onClick={() => scrollToSection("about")}>
+                      About
                     </MenuItem>
                     <MenuItem onClick={() => scrollToSection("highlights")}>
                       Highlights
                     </MenuItem>
-                    <MenuItem onClick={() => scrollToSection("pricing")}>
-                      Pricing
-                    </MenuItem>
-                    <MenuItem onClick={() => scrollToSection("faq")}>
-                      FAQ
+                    <MenuItem onClick={() => scrollToSection("contact")}>
+                      Contact
                     </MenuItem>
                     <Divider />
                     <MenuItem>
-                      <Button
+                      <Link
+                        to="/register"
                         color="primary"
                         variant="contained"
-                        component="a"
-                        href="/register"
                         sx={{ width: "100%" }}
                       >
                         Register
-                      </Button>
+                      </Link>
                     </MenuItem>
                     <MenuItem>
-                      <Button
+                      <Link
+                        to="/login"
                         color="primary"
                         variant="outlined"
-                        component="a"
-                        href="/login"
                         sx={{ width: "100%" }}
                       >
                         Login
-                      </Button>
+                      </Link>
                     </MenuItem>
                   </Box>
                 </Drawer>

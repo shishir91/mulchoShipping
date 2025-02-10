@@ -12,6 +12,8 @@ import {
   PlusIcon,
 } from "@heroicons/react/24/solid";
 import api from "../api/config.js";
+import Loading from "../components/Loading.jsx";
+import { HandCoins } from "lucide-react";
 
 const EditOrder = () => {
   const [order, setOrder] = useState({});
@@ -20,21 +22,44 @@ const EditOrder = () => {
   const orderId = queryParams.get("orderId");
   const token = localStorage.getItem("token");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [commission, setCommission] = useState(0);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchOrder() {
-      const response = await api.get(`/order/getOrderDetail/${orderId}`, {
-        headers: { token },
-      });
-      if (response.data.success) {
-        console.log(response);
+      try {
+        const response = await api.get(`/order/getOrderDetail/${orderId}`, {
+          headers: { token },
+        });
+        if (response.data.success) {
+          console.log(response);
 
-        setFormData(response.data.order);
+          setFormData(response.data.order);
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
       }
     }
     fetchOrder();
-  }, []);
+  }, [orderId]);
+
+  // onchange selected product set commission
+  useEffect(() => {
+    console.log(formData);
+    if (formData.product) {
+      if (formData.price) {
+        let pPrice = Number(formData.product[0].price);
+        let oPrice = Number(formData.price);
+        let x = oPrice - pPrice;
+        setCommission(Number(formData.product[0].commission) + x);
+      } else {
+        setCommission(formData.product[0].commission);
+      }
+    }
+  }, [formData.product, formData.price]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -72,8 +97,13 @@ const EditOrder = () => {
     }
   };
 
+  if (loading) {
+    return <Loading />;
+  }
+
   return (
     <div className="p-4 sm:ml-64 mt-4">
+      {loading && <Loading />}
       <ToastContainer />
       <div className="max-w-md mx-auto bg-white shadow-md rounded-lg p-6">
         <h2 className="text-2xl font-semibold mb-4 flex items-center">
@@ -86,14 +116,31 @@ const EditOrder = () => {
             <label className="block text-gray-700">Product Name</label>
             <div className="flex items-center border border-gray-300 rounded-md p-2">
               <TagIcon className="h-5 w-5 text-gray-400 mr-2" />
+              {console.log(formData)}
+
               <input
                 type="text"
                 name="productName"
-                value={formData.productName || ""}
+                value={formData.product[0].productName || ""}
                 onChange={handleChange}
                 required
                 className="w-full p-1 outline-none"
                 placeholder="Enter product name"
+                disabled
+              />
+            </div>
+          </div>
+
+          {/* Commission */}
+          <div className="mb-4">
+            <label className="block text-gray-700">Commission</label>
+            <div className="flex items-center border border-gray-300 rounded-md p-2">
+              <HandCoins className="h-5 w-5 text-gray-400 mr-2" />
+              <input
+                type="number"
+                value={commission}
+                className="w-full p-1 outline-none"
+                disabled
               />
             </div>
           </div>

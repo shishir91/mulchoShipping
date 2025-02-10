@@ -9,8 +9,16 @@ import work4 from "/images/work4.png";
 import registration from "/images/registration.png";
 import cart from "/images/cart.png";
 import ninePlus from "/images/9+.png";
-import { Facebook, Instagram, Linkedin, Send, Globe, Phone, Menu, X } from 'lucide-react';
-
+import {
+  Facebook,
+  Instagram,
+  Linkedin,
+  Send,
+  Globe,
+  Phone,
+  Menu,
+  X,
+} from "lucide-react";
 
 import { useNavigate } from "react-router-dom";
 
@@ -38,83 +46,6 @@ const HomePage = () => {
     // </div>
 
     <div className="min-h-screen bg-[#b7ebb9]" id="home">
-      {/* Navigation */}
-      <nav className="relative flex justify-between items-center p-2 bg-white">
-        <div className="flex items-center">
-          <img src={img1} alt="Logo" className="rounded-full h-14 pl-10" />
-          <span className="ml-2 font-semibold text-2xl text-gray-800">
-            Mulcho-Shipping
-          </span>
-        </div>
-
-        {/* Mobile Menu Button */}
-        <button
-          className="md:hidden px-2 py-1 mr-4"
-          onClick={toggleMenu}
-          aria-label="Toggle menu"
-        >
-          {isMenuOpen ? (
-            <X className="h-6 w-6 text-gray-700" />
-          ) : (
-            <Menu className="h-6 w-6 text-gray-700" />
-          )}
-        </button>
-
-        {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center space-x-6">
-          <a
-            href="#home"
-            className="text-gray-700 font-semibold hover:text-gray-900"
-          >
-            HOME
-          </a>
-          <a
-            href="#about"
-            className="text-gray-700 font-semibold hover:text-gray-900"
-          >
-            ABOUT
-          </a>
-          <button onClick={()=>navigate("/register")} className="bg-emerald-500 font-semibold text-white px-4 py-2 rounded-3xl hover:bg-emerald-600">
-            GET STARTED
-          </button>
-          <button onClick={()=>navigate("/login")} className="bg-red-400 font-semibold text-white px-4 py-2 rounded-3xl hover:bg-red-500">
-            Log In
-          </button>
-        </div>
-
-        {/* Mobile Navigation */}
-        {isMenuOpen && (
-          <div className="absolute top-full left-0 right-0 bg-white md:hidden shadow-lg z-50">
-            <div className="flex flex-col items-center space-y-4 py-4">
-              <a
-                href="#pricing"
-                className="text-gray-700 font-semibold hover:text-gray-900"
-              >
-                PRICING
-              </a>
-              <a
-                href="#blog"
-                className="text-gray-700 font-semibold hover:text-gray-900"
-              >
-                BLOG
-              </a>
-              <a
-                href="#login"
-                className="text-gray-700 font-semibold hover:text-gray-900"
-              >
-                LOGIN
-              </a>
-              <button className="bg-emerald-500 font-semibold text-white px-4 py-2 rounded-3xl hover:bg-emerald-600 w-32">
-                GET STARTED
-              </button>
-              <button className="bg-red-400 font-semibold text-white px-4 py-2 rounded-3xl hover:bg-red-500 w-32">
-                Log In
-              </button>
-            </div>
-          </div>
-        )}
-      </nav>
-
       {/* Main Content */}
       <div className="container mx-auto px-1 py-5 md:py-24">
         <div className="grid md:grid-cols-2 gap-8 items-center max-w-6xl mx-auto">
@@ -229,7 +160,7 @@ const HomePage = () => {
       </div>
 
       {/* Statistics Section remains the same */}
-      <div className="bg-[#b7ebb9] py-24">
+      <div className="bg-[#b7ebb9] py-24" id="highlights">
         <div className="max-w-6xl mx-auto px-3">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Registration Stats */}
@@ -275,7 +206,7 @@ const HomePage = () => {
       </div>
 
       {/* Footer */}
-      <div className="bg-[#b7ebb9]  py-12">
+      <div className="bg-[#b7ebb9]  py-12" id="contact">
         <div className="max-w-6xl mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Why Mulcho */}

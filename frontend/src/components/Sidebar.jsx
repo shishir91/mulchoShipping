@@ -14,37 +14,37 @@ const Sidebar = () => {
     <div>
       <aside
         id="default-sidebar"
-        className="fixed top-15 left-0 z-40 w-56 h-screen transition-transform -translate-x-full sm:translate-x-0"
+        className="border border-top fixed top-15 left-0 z-40 w-56 h-screen transition-transform -translate-x-full sm:translate-x-0"
         aria-label="Sidebar"
       >
-        <div className="h-full px-3 py-4 overflow-y-auto bg-gray-900 ">
+        <div className="h-full px-3 py-4 overflow-y-auto bg-blue-200 ">
           <ul className="space-y-2 font-medium">
             <li>
               <a
                 href="/dashboard"
-                className="flex items-center p-2 rounded-lg text-white hover:bg-gray-700 group"
+                className="flex items-center p-2 rounded-lg text-black hover:bg-gray-700 group"
               >
-                <ChartPieIcon className="w-5 h-5 transition duration-75 text-gray-400 group-hover:text-white" />
-                <span className="ms-3">Dashboard</span>
+                <ChartPieIcon className="w-5 h-5 transition duration-75 text-gray-900 group-hover:text-white" />
+                <span className="ms-3 group-hover:text-white">Dashboard</span>
               </a>
             </li>
             <li>
               <a
                 href="/products"
-                className="flex items-center p-2 rounded-lg text-white hover:bg-gray-700 group"
+                className="flex items-center p-2 rounded-lg text-black hover:bg-gray-700 group"
               >
-                <ShoppingBagIcon className="w-5 h-5 transition duration-75 text-gray-400 group-hover:text-white" />
-                <span className="ms-3">Products</span>
+                <ShoppingBagIcon className="w-5 h-5 transition duration-75 text-gray-900 group-hover:text-white" />
+                <span className="ms-3 group-hover:text-white">Products</span>
               </a>
             </li>
 
             <li>
               <a
                 href="/orders"
-                className="flex items-center p-2 rounded-lg text-white hover:bg-gray-700 group"
+                className="flex items-center p-2 rounded-lg text-black hover:bg-gray-700 group"
               >
-                <ArchiveBoxIcon className="w-5 h-5 transition duration-75 text-gray-400 group-hover:text-white" />
-                <span className="flex-1 ms-3 whitespace-nowrap">Orders</span>
+                <ArchiveBoxIcon className="w-5 h-5 transition duration-75 text-gray-900 group-hover:text-white" />
+                <span className="ms-3 group-hover:text-white">Orders</span>
               </a>
             </li>
 
@@ -52,18 +52,18 @@ const Sidebar = () => {
               {user.role === "admin" ? (
                 <a
                   href="/payment"
-                  className="flex items-center p-2 rounded-lg text-white hover:bg-gray-700 group"
+                  className="flex items-center p-2 rounded-lg text-black hover:bg-gray-700 group"
                 >
-                  <CurrencyDollarIcon className="w-5 h-5 transition duration-75 text-gray-400 group-hover:text-white" />
-                  <span className="flex-1 ms-3 whitespace-nowrap">Payment</span>
+                  <CurrencyDollarIcon className="w-5 h-5 transition duration-75 text-gray-900 group-hover:text-white" />
+                  <span className="ms-3 group-hover:text-white">Payment</span>
                 </a>
               ) : (
                 <a
                   href="/income"
-                  className="flex items-center p-2 rounded-lg text-white hover:bg-gray-700 group"
+                  className="flex items-center p-2 rounded-lg text-black hover:bg-gray-700 group"
                 >
-                  <CurrencyDollarIcon className="w-5 h-5 transition duration-75 text-gray-400 group-hover:text-white" />
-                  <span className="flex-1 ms-3 whitespace-nowrap">
+                  <CurrencyDollarIcon className="w-5 h-5 transition duration-75 text-gray-900 group-hover:text-white" />
+                  <span className="ms-3 group-hover:text-white">
                     My Income
                   </span>
                 </a>
@@ -74,10 +74,10 @@ const Sidebar = () => {
               <li>
                 <a
                   href="/users"
-                  className="flex items-center p-2 rounded-lg text-white hover:bg-gray-700 group"
+                  className="flex items-center p-2 rounded-lg text-black hover:bg-gray-700 group"
                 >
-                  <UserGroupIcon className="w-5 h-5 transition duration-75 text-gray-400 group-hover:text-white" />
-                  <span className="flex-1 ms-3 whitespace-nowrap">Users</span>
+                  <UserGroupIcon className="w-5 h-5 transition duration-75 text-gray-900 group-hover:text-white" />
+                  <span className="ms-3 group-hover:text-white">Users</span>
                 </a>
               </li>
             )}
