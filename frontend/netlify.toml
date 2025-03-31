@@ -1,3 +1,4 @@
 [build]
-  command = "yarn install"
-  environment = { NODE_VERSION = "20" }
+  base = "frontend"
+  command = "yarn install && yarn build"
+  publish = "frontend/dist"
