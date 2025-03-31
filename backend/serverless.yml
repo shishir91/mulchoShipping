@@ -1,0 +1,26 @@
+service: mulcho-shipping-backend
+
+provider:
+  name: aws
+  runtime: nodejs22.x
+  region: ap-south-1
+  timeout: 30
+  memorySize: 512
+  environment:
+    MONGO_URI: ${env:MONGODBCONNECTIONSTRING}
+    CLIENT_ORIGIN: ${env:CLIENT_ORIGIN}
+    SESSION_SECRET: ${env:SESSION_SECRET}
+
+functions:
+  api:
+    handler: src/server.handler
+    events:
+      - http:
+          path: /
+          method: any
+      - http:
+          path: /{proxy+}
+          method: any
+
+plugins:
+  - serverless-offline

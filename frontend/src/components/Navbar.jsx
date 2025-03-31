@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import {
   Box,
   AppBar,
@@ -27,6 +27,7 @@ import {
   BellIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
+import { useAuth } from "../context/AuthContext";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", current: true },
@@ -42,8 +43,8 @@ function Navbar() {
   const [open, setOpen] = React.useState(false);
   const navigate = useNavigate();
 
-  const user = JSON.parse(localStorage.getItem("userInfo"));
-  const token = localStorage.getItem("token");
+  const { updateAuth, authState } = useAuth();
+  const { userInfo: user, token } = authState;
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
@@ -63,14 +64,16 @@ function Navbar() {
     }
   };
 
-  const logoutHandler = () => {
-    localStorage.removeItem("userInfo");
-    localStorage.removeItem("token");
-    navigate("/");
+  const logoutHandler = async () => {
+    await updateAuth();
+    toast.success("User Logged Out", {
+      autoClose: 1000,
+      onClose: () => navigate("/"),
+    });
   };
 
   return (
-    <div className="sticky top-0">
+    <div className="sticky top-0 z-[1000]">
       {user && token ? (
         <Disclosure as="nav" className="bg-blue-200">
           <div className="max-w-8xl px-2 sm:px-6 lg:px-8 ">
@@ -111,13 +114,10 @@ function Navbar() {
                 {/* Profile dropdown */}
                 <Menu as="div" className="relative ml-3">
                   <div>
-                    <MenuButton className="relative flex rounded-full bg-gray-800 text-sm  focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                    <MenuButton className="relative flex rounded-full cursor-pointer text-gray-400 hover:text-white bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                       <span className="absolute -inset-1.5" />
                       <span className="sr-only">Open user menu</span>
-                      <UserIcon
-                        aria-hidden="true"
-                        className="h-8 w-auto p-1 text-gray-400"
-                      />
+                      <UserIcon aria-hidden="true" className="h-8 w-auto p-1" />
                     </MenuButton>
                   </div>
                   <MenuItems

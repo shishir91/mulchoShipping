@@ -11,28 +11,30 @@ import {
 import api from "../api/config.js";
 import Alert from "../components/Alerter.jsx";
 import Alerter from "../components/Alerter.jsx";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const Dashboard = () => {
   const hasFetched = useRef(false);
   const [loading, setLoading] = useState(false);
-  const [user, setUser] = useState({});
+  // const [user, setUser] = useState({});
   const [userOrders, setUserOrders] = useState([]);
   const [totalUsers, setTotalUsers] = useState(0);
 
-  const userls = JSON.parse(localStorage.getItem("userInfo"));
-  const token = localStorage.getItem("token");
+  const { updateAuth, authState } = useAuth();
+  const { userInfo: user, token } = authState;
 
   let cancelledCount = 0;
   let returnedCount = 0;
   let deliveredCount = 0;
 
-  const fetchUserData = async () => {
-    const response = await api.get("/user", { headers: { token } });
-    if (response.data.success) {
-      setUser(response.data.data);
-      localStorage.setItem("userInfo", JSON.stringify(response.data.data));
-    }
-  };
+  // const fetchUserData = async () => {
+  //   const response = await api.get("/user", { headers: { token } });
+  //   if (response.data.success) {
+  //     setUser(response.data.data);
+  //     localStorage.setItem("userInfo", JSON.stringify(response.data.data));
+  //     // await updateAuth(response.data.data, token)
+  //   }
+  // };
   const fetchAllUsers = async () => {
     const response1 = await api.get("/admin/users", { headers: { token } });
     if (response1.data.success) {
@@ -58,8 +60,8 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (!hasFetched.current) {
-      fetchUserData();
-      if (userls.role == "admin") {
+      // fetchUserData();
+      if (user.role == "admin") {
         fetchAllOrders();
         fetchAllUsers();
         hasFetched.current = true;

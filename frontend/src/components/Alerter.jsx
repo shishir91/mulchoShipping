@@ -2,9 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Alert } from "@mui/material";
 
 const Alerter = ({ userStatus, userVerified }) => {
-  console.log(userStatus);
-  console.log(userVerified);
-
   const [message, setMessage] = useState("");
   useEffect(() => {
     if (userStatus === "blocked") {

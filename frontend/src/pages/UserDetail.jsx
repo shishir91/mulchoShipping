@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import Loading from "../components/Loading.jsx";
 import api from "../api/config.js";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const UserDetail = () => {
   const [user, setUser] = useState(null);
@@ -16,7 +17,9 @@ const UserDetail = () => {
   const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
   const userId = queryParams.get("user");
-  const token = localStorage.getItem("token");
+
+  const { authState } = useAuth();
+  const { userInfo, token } = authState;
   const [showModal, setShowModal] = useState(false); // Track modal visibility
   const [reason, setReason] = useState("");
   const [status, setStatus] = useState("");
@@ -57,7 +60,7 @@ const UserDetail = () => {
           isUserVerified: true,
         }));
         toast.success(response.data.message);
-        setShowModal(false)
+        setShowModal(false);
       }
     } catch (error) {
       console.error("Error verifying user:", error);

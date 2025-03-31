@@ -31,13 +31,14 @@ const HomePage = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  useEffect(() => {
-    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-    const token = localStorage.getItem("token");
-    if (userInfo && token) {
-      return navigate("/dashboard");
-    }
-  }, []);
+  // useEffect(() => {
+
+  // const { updateAuth, authState } = useAuth();
+  // const { userInfo, token } = authState;
+  //   if (userInfo && token) {
+  //     return navigate("/dashboard");
+  //   }
+  // }, []);
 
   return (
     // <div className="mt-20 text-lg font-bold ">

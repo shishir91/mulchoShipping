@@ -14,17 +14,22 @@ import {
 } from "@heroicons/react/24/solid";
 
 import api from "../api/config.js";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const AddOrder = () => {
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
+
+  const { authState } = useAuth();
+  const { userInfo: user, token } = authState;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [myProducts, setMyProducts] = useState([]);
-  const [commission, setCommission] = useState(0);
+  const [selectedProduct, setSelectedProduct] = useState();
   const [formData, setFormData] = useState({
     product: "",
     qty: "",
     price: "",
+    commission: "",
+    commissionRate: "",
     customerName: "",
     customerPhone: "",
     customerLocation: "",
@@ -54,23 +59,43 @@ const AddOrder = () => {
     getMyProducts();
   }, []);
 
-  // onchange selected product set commission
   useEffect(() => {
-    const selectedProduct = myProducts.find(
+    // Find the product based on formData.product
+    const product = myProducts.find(
       (product) => product._id === formData.product
     );
 
-    if (selectedProduct) {
-      if (formData.price) {
-        let pPrice = Number(selectedProduct.price);
-        let oPrice = Number(formData.price);
-        let x = oPrice - pPrice;
-        setCommission(Number(selectedProduct.commission) + x);
-      } else {
-        setCommission(selectedProduct.commission);
-      }
+    if (product) {
+      // If the product is found, update the state with its properties
+      setSelectedProduct(product);
+      console.log(product);
+      setFormData((prevData) => ({
+        ...prevData,
+        price: product.price,
+        commission: parseFloat(product.commission).toFixed(2),
+        commissionRate: parseFloat(product.commissionRate) + parseFloat(user.commissionRate)
+      }));
+      // setCommission(product.commission);
+    } else {
+      // Optionally handle the case when the product is not found
+      console.log("Product not found.");
     }
-  }, [formData.product, formData.price, myProducts]);
+  }, [formData.product, myProducts]);
+
+  useEffect(() => {
+    if (formData.product) {
+      let pPrice = parseFloat(selectedProduct.price);
+      let oPrice = parseFloat(formData.price);
+      let x = oPrice - pPrice;
+      console.log(pPrice);
+      console.log(oPrice);
+      console.log(x);
+      setFormData((prevData) => ({
+        ...prevData,
+        commission: (parseFloat(selectedProduct.commission) + x).toFixed(2),
+      }));
+    }
+  }, [formData.price]);
 
   // Handle change in input fields
   const handleChange = (e) => {
@@ -109,7 +134,7 @@ const AddOrder = () => {
         setIsSubmitting(false);
         console.log(response);
         toast.error(response.data.message, {
-          autoClose: 2000,
+          autoClose: 3000,
           theme: "colored",
         });
       }
@@ -117,7 +142,7 @@ const AddOrder = () => {
       setIsSubmitting(false);
       console.log(e);
       toast.error(e, {
-        autoClose: 2000,
+        autoClose: 3000,
         theme: "colored",
       });
     }
@@ -134,7 +159,9 @@ const AddOrder = () => {
         <form onSubmit={handleSubmit}>
           {/* Product Name */}
           <div className="mb-4">
-            <label className="block text-gray-700">Product Name</label>
+            <label className="block text-gray-700 font-semibold">
+              Product Name
+            </label>
             <div className="flex items-center border border-gray-300 rounded-md p-2">
               <TagIcon className="h-5 w-5 text-gray-400 mr-2" />
               <select
@@ -155,27 +182,15 @@ const AddOrder = () => {
             </div>
           </div>
 
-          {/* Commission */}
-          <div className="mb-4">
-            <label className="block text-gray-700">Commission</label>
-            <div className="flex items-center border border-gray-300 rounded-md p-2">
-              <HandCoins className="h-5 w-5 text-gray-400 mr-2" />
-              <input
-                type="number"
-                value={commission}
-                className="w-full p-1 outline-none"
-                disabled
-              />
-            </div>
-          </div>
-
           {/* Quantity */}
           <div className="mb-4">
-            <label className="block text-gray-700">Quantity</label>
+            <label className="block text-gray-700 font-semibold">
+              Quantity
+            </label>
             <div className="flex items-center border border-gray-300 rounded-md p-2">
               <ShoppingCartIcon className="h-5 w-5 text-gray-400 mr-2" />
               <input
-                type="text"
+                type="number"
                 name="qty"
                 value={formData.qty}
                 onChange={handleChange}
@@ -188,11 +203,16 @@ const AddOrder = () => {
 
           {/* Price */}
           <div className="mb-4">
-            <label className="block text-gray-700">Price</label>
+            <label className="block text-gray-700 font-semibold">Price</label>
+            {selectedProduct && (
+              <p className="block text-gray-700 text-xs">
+                Actual Price: {selectedProduct.price}
+              </p>
+            )}
             <div className="flex items-center border border-gray-300 rounded-md p-2">
               <CurrencyDollarIcon className="h-5 w-5 text-gray-400 mr-2" />
               <input
-                type="text"
+                type="number"
                 name="price"
                 value={formData.price}
                 onChange={handleChange}
@@ -203,9 +223,71 @@ const AddOrder = () => {
             </div>
           </div>
 
+          {/* Commission Rate*/}
+          <div className="mb-4">
+            <div className="flex gap-4">
+              <div>
+                <label className="block text-gray-700 font-semibold">
+                  Commission Rate (%)
+                </label>
+                <div className="flex items-center border border-gray-300 rounded-md p-2">
+                  <HandCoins className="h-5 w-5 text-gray-400 mr-2" />
+                  <input
+                    type="number"
+                    value={selectedProduct?.commissionRate}
+                    placeholder="Commission"
+                    className="w-full p-1 outline-none cursor-not-allowed text-gray-600"
+                    disabled
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-gray-700 font-semibold">
+                  Bonus Commission (%)
+                </label>
+                <div className="flex items-center border border-gray-300 rounded-md p-2">
+                  <HandCoins className="h-5 w-5 text-gray-400 mr-2" />
+                  {console.log(user)}
+                  <input
+                    type="number"
+                    value={user?.commissionRate}
+                    placeholder="Commission"
+                    className="w-full p-1 outline-none cursor-not-allowed text-gray-600"
+                    disabled
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Commission */}
+          <div className="mb-4">
+            <label className="block text-gray-700 font-semibold">
+              Commission
+            </label>
+            {selectedProduct && (
+              <p className="block text-gray-700 text-xs">
+                Actual Commission:{" "}
+                {parseFloat(selectedProduct.commission).toFixed(2)}
+              </p>
+            )}
+            <div className="flex items-center border border-gray-300 rounded-md p-2">
+              <HandCoins className="h-5 w-5 text-gray-400 mr-2" />
+              <input
+                type="number"
+                value={formData.commission}
+                placeholder="Commission"
+                className="w-full p-1 outline-none cursor-not-allowed text-gray-600"
+                disabled
+              />
+            </div>
+          </div>
+
           {/* Customer Name */}
           <div className="mb-4">
-            <label className="block text-gray-700">Customer Name</label>
+            <label className="block text-gray-700 font-semibold">
+              Customer Name
+            </label>
             <div className="flex items-center border border-gray-300 rounded-md p-2">
               <UserIcon className="h-5 w-5 text-gray-400 mr-2" />
               <input
@@ -222,7 +304,9 @@ const AddOrder = () => {
 
           {/* Customer Phone */}
           <div className="mb-4">
-            <label className="block text-gray-700">Customer Phone Number</label>
+            <label className="block text-gray-700 font-semibold">
+              Customer Phone Number
+            </label>
             <div className="flex items-center border border-gray-300 rounded-md p-2">
               <PhoneIcon className="h-5 w-5 text-gray-400 mr-2" />
               <input
@@ -239,7 +323,9 @@ const AddOrder = () => {
 
           {/* Customer Location */}
           <div className="mb-4">
-            <label className="block text-gray-700">Customer Location</label>
+            <label className="block text-gray-700 font-semibold">
+              Customer Location
+            </label>
             <div className="flex items-center border border-gray-300 rounded-md p-2">
               <MapPinIcon className="h-5 w-5 text-gray-400 mr-2" />
               <input
@@ -256,7 +342,9 @@ const AddOrder = () => {
 
           {/* Remarks */}
           <div className="mb-4">
-            <label className="block text-gray-700">Remarks (Optional)</label>
+            <label className="block text-gray-700 font-semibold">
+              Remarks (Optional)
+            </label>
             <div className="flex items-center border border-gray-300 rounded-md p-2">
               <ClipboardDocumentCheckIcon className="h-5 w-5 text-gray-400 mr-2" />
               <textarea

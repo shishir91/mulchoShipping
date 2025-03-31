@@ -14,11 +14,13 @@ import Container from "@mui/material/Container";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import api from "../api/config.js";
-
+import { useAuth } from "../context/AuthContext.jsx";
 
 export default function Login() {
   const [formData, setFormData] = useState({});
   const navigate = useNavigate();
+  const { updateAuth, authState } = useAuth();
+  const { userInfo: user, token } = authState;
 
   const handelChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -31,11 +33,8 @@ export default function Login() {
       const response = await api.post("/user/login", { ...formData });
       console.log(response);
       if (response.data.success) {
-        localStorage.setItem(
-          "userInfo",
-          JSON.stringify(response.data.userData)
-        );
-        localStorage.setItem("token", response.data.token);
+        await updateAuth(response.data.userData, response.data.token);
+        window.dispatchEvent(new Event("auth-change"));
         toast.success(response.data.message, {
           autoClose: 1000,
           theme: "colored",

@@ -1,7 +1,7 @@
 import userModel from "../models/userModel.js";
 import transactionModel from "../models/transactionModel.js";
 import orderModel from "../models/orderModel.js";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import validator from "validator";
 import generateToken from "../config/generateToken.js";
 import { v2 as cloudinary } from "cloudinary";

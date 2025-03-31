@@ -2,13 +2,16 @@ import React, { useEffect, useState } from "react";
 import api from "../api/config";
 import { toast, ToastContainer } from "react-toastify";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 
 const ProductDetail = () => {
   const queryParams = new URLSearchParams(location.search);
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const productId = queryParams.get("productId");
-  const token = localStorage.getItem("token");
+
+  const { authState } = useAuth();
+  const { userInfo: user, token } = authState;
   const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {

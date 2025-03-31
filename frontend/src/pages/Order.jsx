@@ -5,6 +5,7 @@ import { ToastContainer, toast } from "react-toastify";
 import api from "../api/config.js";
 import Loading from "../components/Loading.jsx";
 import Alerter from "../components/Alerter.jsx";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const Order = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -17,8 +18,8 @@ const Order = () => {
   const [showStatusMenu, setShowStatusMenu] = useState(false); // to toggle the status dropdown
   const [userOrders, setUserOrders] = useState([]);
 
-  const user = JSON.parse(localStorage.getItem("userInfo"));
-  const token = localStorage.getItem("token");
+  const { authState } = useAuth();
+  const { userInfo: user, token } = authState;
 
   let filteredOrders;
 
@@ -36,12 +37,6 @@ const Order = () => {
     { name: "CANCELLED", id: "cancelled" },
   ];
 
-  const fetchUserData = async () => {
-    const response = await api.get("/user", { headers: { token } });
-    if (response.data.success) {
-      localStorage.setItem("userInfo", JSON.stringify(response.data.data));
-    }
-  };
   const fetchUserOrders = async () => {
     const response = await api.get("/order/getMyOrders", {
       headers: { token },
@@ -63,7 +58,6 @@ const Order = () => {
 
   useEffect(() => {
     if (!hasFetched.current) {
-      fetchUserData();
       if (user.role == "admin") {
         fetchAllOrders();
         hasFetched.current = true;
@@ -259,7 +253,7 @@ const Order = () => {
                           {new Date(ord.createdAt).toISOString().split("T")[0]}
                         </td>
                         <td className="p-2 border-b border-gray-300">
-                          {ord.product[0].productName}
+                          {ord.product.productName}
                         </td>
                         <td className="p-2 border-b border-gray-300">
                           {ord.qty}
@@ -306,7 +300,7 @@ const Order = () => {
                           {new Date(ord.createdAt).toISOString().split("T")[0]}
                         </td>
                         <td className="p-2 border-b border-gray-300">
-                          {ord.product[0].productName}
+                          {ord.product.productName}
                         </td>
                         <td className="p-2 border-b border-gray-300">
                           {ord.qty}

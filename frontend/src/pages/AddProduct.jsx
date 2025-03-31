@@ -12,10 +12,12 @@ import {
 } from "@heroicons/react/24/solid";
 import { useNavigate } from "react-router-dom";
 import Loading from "../components/Loading.jsx";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const AddProduct = () => {
   const [formData, setFormData] = useState({
     productName: "",
+    commissionRate: "",
     commission: "",
     price: "",
     description: "",
@@ -23,14 +25,25 @@ const AddProduct = () => {
   const navigate = useNavigate();
   const [images, setImages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const token = localStorage.getItem("token");
+
+  const { authState } = useAuth();
+  const { userInfo: user, token } = authState;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+
+    setFormData((prevData) => {
+      const updatedData = { ...prevData, [name]: value };
+
+      if (name === "commissionRate" && prevData.price) {
+        updatedData.commission = (
+          (parseFloat(value) / 100) *
+          parseFloat(prevData.price)
+        ).toFixed(2);
+      }
+
+      return updatedData;
+    });
   };
 
   const handleImageUpload = (e) => {
@@ -137,18 +150,36 @@ const AddProduct = () => {
             </div>
           </div>
 
+          {/* Commission Rate */}
+          <div className="mb-4">
+            <label className="block text-gray-700">Commission Rate (%)</label>
+            <div className="flex items-center border border-gray-300 rounded-md p-2">
+              <CurrencyDollarIcon className="h-5 w-5 text-gray-400 mr-2" />
+              <input
+                type="number"
+                name="commissionRate"
+                value={formData.commissionRate}
+                onChange={handleChange}
+                required
+                className="w-full p-1 outline-none"
+                placeholder="Enter commission rate"
+              />
+            </div>
+          </div>
+
           {/* Commission */}
           <div className="mb-4">
-            <label className="block text-gray-700">Commission</label>
+            <label className="block text-gray-700">Commission (Rs.)</label>
             <div className="flex items-center border border-gray-300 rounded-md p-2">
               <CurrencyDollarIcon className="h-5 w-5 text-gray-400 mr-2" />
               <input
                 type="number"
                 name="commission"
                 value={formData.commission}
-                onChange={handleChange}
+                // onChange={handleChange}
+                disabled
                 required
-                className="w-full p-1 outline-none"
+                className="w-full p-1 outline-none cursor-not-allowed"
                 placeholder="Enter commission"
               />
             </div>
@@ -181,7 +212,7 @@ const AddProduct = () => {
                 accept="image/*"
                 onChange={handleImageUpload}
                 className="w-full p-1 outline-none"
-                // required
+                required
               />
             </div>
           </div>

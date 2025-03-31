@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -28,30 +28,84 @@ import ProductDetail from "./pages/ProductDetail";
 import AddProduct from "./pages/AddProduct";
 import EditProduct from "./pages/EditProduct";
 import MyProducts from "./pages/MyProducts";
-
-// A Protected Route component
-const ProtectedRoute = ({ children }) => {
-  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-  const token = localStorage.getItem("token");
-
-  // If no user info or token, redirect to login
-  if (!userInfo || !token) {
-    return <Navigate to="/login" replace />;
-  }
-
-  return children;
-};
+import { useAuth } from "./context/AuthContext";
 
 const App = () => {
+  const { authState, updateAuth, isLoading } = useAuth();
+  useEffect(() => {
+    const handleStorageChange = async () => {
+      const encryptedData = Cookies.get("userInfo");
+      if (encryptedData) {
+        const bytes = CryptoJS.AES.decrypt(
+          encryptedData,
+          import.meta.env.VITE_CLIENT_SECRET_KEY
+        );
+        const userInfo = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+        const token = Cookies.get("token");
+
+        // 🔥 Update global auth state
+        await updateAuth(userInfo, token);
+      }
+    };
+
+    // Listen for storage changes
+    window.addEventListener("storage", handleStorageChange);
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
+
+  const ProtectedRoute = ({ children }) => {
+    if (isLoading) {
+      // Render a loading state while loading auth data
+      return <div>Loading...</div>;
+    }
+
+    if (!authState.userInfo || !authState.token) {
+      console.log(authState);
+      return <Navigate to="/" replace />;
+    }
+
+    return children;
+  };
+
+  // Public route (redirect if logged in)
+  const PublicRoute = ({ children }) => {
+    if (authState.userInfo && authState.token) {
+      return <Navigate to="/dashboard" replace />;
+    }
+    return children;
+  };
   return (
     <Router>
       {/* <Loading/> */}
       <Navbar />
       <Routes>
         {/* Public Routes */}
-        <Route path="/" element={<HomePage />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route
+          path="/"
+          element={
+            <PublicRoute>
+              <HomePage />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            <PublicRoute>
+              <Login />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <PublicRoute>
+              <Register />
+            </PublicRoute>
+          }
+        />
 
         {/* Protected Routes */}
         <Route

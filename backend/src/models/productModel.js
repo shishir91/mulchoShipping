@@ -12,11 +12,15 @@ const productModel = mongoose.Schema(
       required: true,
     },
     price: {
-      type: String,
+      type: Number,
       required: true,
     },
     commission: {
-      type: String,
+      type: Number,
+      required: true,
+    },
+    commissionRate: {
+      type: Number,
       required: true,
     },
     images: [{ type: String }],

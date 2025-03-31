@@ -48,14 +48,14 @@ export default class OrderController {
             "You cannot set order price less than (Product Price - Commission)",
         });
       }
-      let x = oPrice - pPrice;
+      // let x = oPrice - pPrice;
 
-      let commission = Number(product.commission) + x;
+      // let commission = Number(product.commission) + x;
 
       let newOrder = await orderModel.create({
         ...req.body,
         orderFrom: req.user,
-        commission,
+        // commission,
       });
       newOrder = await orderModel.populate(newOrder, {
         path: "orderFrom product",

@@ -6,11 +6,12 @@ import {
   LinkIcon,
   IdentificationIcon,
   PhotoIcon,
-  UserIcon
+  UserIcon,
 } from "@heroicons/react/24/outline";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import Loading from "../components/Loading.jsx";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const UserVerification = () => {
   const [formData, setFormData] = useState({});
@@ -18,8 +19,8 @@ const UserVerification = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const user = JSON.parse(localStorage.getItem("userInfo"));
-  const token = localStorage.getItem("token");
+  const { updateAuth, authState } = useAuth();
+  const { userInfo: user, token } = authState;
 
   useEffect(() => {
     if (user.status == "underReview") {
@@ -53,7 +54,7 @@ const UserVerification = () => {
     );
     setIsLoading(false);
     if (response.data.success) {
-      localStorage.setItem("userInfo", JSON.stringify(response.data.data));
+      await updateAuth(response.data.data, token);
       toast.success(
         "Form Submitted. Your profile is under review. You will be notify soon once its done.",
         {

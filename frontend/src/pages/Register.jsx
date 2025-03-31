@@ -14,11 +14,12 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import api from "../api/config.js";
-
+import { useAuth } from "../context/AuthContext.jsx";
 
 export default function Register() {
   const [formData, setFormData] = useState({});
   const navigate = useNavigate();
+  const { updateAuth } = useAuth();
 
   const handelChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -31,11 +32,7 @@ export default function Register() {
       const response = await api.post("/user/register", { ...formData });
       console.log(response);
       if (response.data.success) {
-        localStorage.setItem(
-          "userInfo",
-          JSON.stringify(response.data.userData)
-        );
-        localStorage.setItem("token", response.data.token);
+        await updateAuth(response.data.userInfo, response.data.token);
         toast.success(response.data.message, {
           autoClose: 1000,
           theme: "colored",

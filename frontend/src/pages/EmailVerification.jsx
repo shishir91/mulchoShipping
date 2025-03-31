@@ -4,10 +4,11 @@ import { EnvelopeIcon } from "@heroicons/react/24/outline";
 import api from "../api/config.js";
 import { ToastContainer, toast } from "react-toastify";
 import Loading from "../components/Loading.jsx";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const EmailVerification = () => {
-  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-  const token = localStorage.getItem("token");
+  const { updateAuth, authState } = useAuth();
+  const { userInfo, token } = authState;
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [resendCountdown, setResendCountdown] = useState(10);
@@ -82,7 +83,7 @@ const EmailVerification = () => {
     console.log(response);
     setLoading(false);
     if (response.data.success) {
-      localStorage.setItem("userInfo", JSON.stringify(response.data.data));
+      await updateAuth(response.data.data, token);
       toast.success(response.data.message, {
         autoClose: 1000,
         theme: "colored",
@@ -143,7 +144,7 @@ const EmailVerification = () => {
             disabled={!canResend || loading}
             className={`${
               canResend && !loading
-                ? "text-blue-500 hover:underline"
+                ? "text-blue-500 hover:underline cursor-pointer"
                 : "text-gray-400 cursor-not-allowed"
             } text-sm font-medium focus:outline-none`}
           >

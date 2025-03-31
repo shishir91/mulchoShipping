@@ -1,1 +1,2 @@
 VITE_SERVER_BASE_URL = yourServerBaseURL
+VITE_CLIENT_SECRET_KEY = yourSecretKey

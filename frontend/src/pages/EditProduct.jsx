@@ -13,6 +13,7 @@ import api from "../api/config.js";
 import { ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import Loading from "../components/Loading.jsx";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const EditProduct = () => {
   const location = useLocation();
@@ -21,8 +22,9 @@ const EditProduct = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [images, setImages] = useState(product.images);
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
 
+  const { authState } = useAuth();
+  const { userInfo: user, token } = authState;
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({

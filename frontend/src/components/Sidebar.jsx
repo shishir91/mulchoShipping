@@ -6,15 +6,16 @@ import {
   UserGroupIcon,
   ArchiveBoxIcon,
 } from "@heroicons/react/24/solid";
+import { useAuth } from "../context/AuthContext";
 
 const Sidebar = () => {
-  const user = JSON.parse(localStorage.getItem("userInfo"));
-
+  const { authState } = useAuth();
+  const { userInfo: user, token } = authState;
   return (
     <div>
       <aside
         id="default-sidebar"
-        className="border border-top fixed top-15 left-0 z-40 w-56 h-screen transition-transform -translate-x-full sm:translate-x-0"
+        className="border-t fixed top-16 left-0 z-40 w-56 h-screen transition-transform -translate-x-full sm:translate-x-0"
         aria-label="Sidebar"
       >
         <div className="h-full px-3 py-4 overflow-y-auto bg-blue-200 ">
@@ -63,9 +64,7 @@ const Sidebar = () => {
                   className="flex items-center p-2 rounded-lg text-black hover:bg-gray-700 group"
                 >
                   <CurrencyDollarIcon className="w-5 h-5 transition duration-75 text-gray-900 group-hover:text-white" />
-                  <span className="ms-3 group-hover:text-white">
-                    My Income
-                  </span>
+                  <span className="ms-3 group-hover:text-white">My Income</span>
                 </a>
               )}
             </li>

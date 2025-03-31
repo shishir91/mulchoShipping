@@ -3,12 +3,15 @@ import { CurrencyDollarIcon } from "@heroicons/react/24/solid";
 import { ToastContainer, toast } from "react-toastify";
 import api from "../api/config.js";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const MyIncome = () => {
   const [totalIncome, setTotalIncome] = useState(0);
   const [incomeData, setIncomeData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const token = localStorage.getItem("token");
+
+  const { authState } = useAuth();
+  const { userInfo: user, token } = authState;
   const navigate = useNavigate();
 
   const queryParams = new URLSearchParams(location.search);

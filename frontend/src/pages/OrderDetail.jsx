@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/config.js";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const OrderDetail = () => {
   const [order, setOrder] = useState(null); // Initialize order state
@@ -8,14 +9,15 @@ const OrderDetail = () => {
   const orderId = queryParams.get("orderId");
   const navigate = useNavigate();
 
-  const token = localStorage.getItem("token");
-
+  const { authState } = useAuth();
+  const { userInfo: user, token } = authState;
   useEffect(() => {
     async function fetchOrder() {
       const response = await api.get(`/order/getOrderDetail/${orderId}`, {
         headers: { token },
       });
       if (response.data.success) {
+        console.log(response.data.order);
         setOrder(response.data.order);
       }
     }
@@ -37,15 +39,23 @@ const OrderDetail = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div className="bg-gray-50 p-4 rounded-lg shadow">
             <p className="font-semibold text-gray-700">Product Name:</p>
-            <p className="text-gray-500">{order.product[0].productName}</p>
+            <p className="text-gray-500">{order.product.productName}</p>
           </div>
           <div className="bg-gray-50 p-4 rounded-lg shadow">
             <p className="font-semibold text-gray-700">Quantity:</p>
             <p className="text-gray-500">{order.qty}</p>
           </div>
           <div className="bg-gray-50 p-4 rounded-lg shadow">
-            <p className="font-semibold text-gray-700">Price:</p>
-            <p className="text-gray-500">${order.price}</p>
+            <p className="font-semibold text-gray-700">Product Price:</p>
+            <p className="text-gray-500">Rs. {order.product.price}</p>
+          </div>
+          <div className="bg-gray-50 p-4 rounded-lg shadow">
+            <p className="font-semibold text-gray-700">Order Price:</p>
+            <p className="text-gray-500">Rs. {order.price}</p>
+          </div>
+          <div className="bg-gray-50 p-4 rounded-lg shadow">
+            <p className="font-semibold text-gray-700">Commission:</p>
+            <p className="text-gray-500">Rs. {order.commission}</p>
           </div>
           <div className="bg-gray-50 p-4 rounded-lg shadow">
             <p className="font-semibold text-gray-700">Status:</p>
@@ -84,7 +94,7 @@ const OrderDetail = () => {
         <h2 className="text-xl font-bold text-gray-900 mb-4">Order From</h2>
         <div className="bg-gray-50 p-4 rounded-lg shadow">
           <p className="font-semibold text-gray-700">Ordered By:</p>
-          <p className="text-gray-500">{order.orderFrom[0]?.name}</p>
+          <p className="text-gray-500">{order.orderFrom?.name}</p>
         </div>
       </section>
 

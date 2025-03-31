@@ -290,14 +290,30 @@ export default class AdminController {
   //PAYMENT APISSS
   async getAllPayments(req, res) {
     try {
-      const payments = await transactionModel
-        .find()
-        .populate("to source", "-password -otp");
+      const payments = await transactionModel.find().populate([
+        { path: "to" }, // Populating 'to' field
+        {
+          path: "source", // Populating 'source' (Order)
+          populate: { path: "product" }, // Populating 'product' inside 'source' (Order)
+        },
+      ]);
+
       console.log(payments);
 
       return res.json({ success: true, payments });
     } catch (error) {
+      console.log(error);
+
       return res.status(400).send(error);
+    }
+  }
+  async paymentDone(req, res) {
+    try {
+      const { transactionID } = req.params;
+      const transaction = await transactionModel.findByIdAndUpdate(transactionID, {})
+    } catch (error) {
+      console.log(error);
+      return res.status(500).send(error);
     }
   }
 

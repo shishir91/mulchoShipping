@@ -14,13 +14,16 @@ import {
 import api from "../api/config.js";
 import Loading from "../components/Loading.jsx";
 import { HandCoins } from "lucide-react";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const EditOrder = () => {
   const [order, setOrder] = useState({});
   const [formData, setFormData] = useState({});
   const queryParams = new URLSearchParams(location.search);
   const orderId = queryParams.get("orderId");
-  const token = localStorage.getItem("token");
+
+  const { authState } = useAuth();
+  const { userInfo: user, token } = authState;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [commission, setCommission] = useState(0);
   const [loading, setLoading] = useState(true);

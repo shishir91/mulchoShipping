@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { UserIcon, EnvelopeIcon } from "@heroicons/react/24/outline";
 import { useNavigate } from "react-router-dom";
 import api from "../api/config.js";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const Users = () => {
   const [users, setUsers] = useState([]);
@@ -9,8 +10,9 @@ const Users = () => {
   const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
   const userStatus = queryParams.get("users");
-  const token = localStorage.getItem("token");
-  const user = JSON.parse(localStorage.getItem("userInfo"));
+  
+  const { authState } = useAuth();
+  const { userInfo: user, token } = authState;
 
   let filteredUsers;
 

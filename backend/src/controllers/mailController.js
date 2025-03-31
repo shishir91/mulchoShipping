@@ -171,7 +171,7 @@ export default class MailController {
             .status(500)
             .json({ success: false, message: "Failed to send email" });
         } else {
-          req.session.sentCode = generatedCode; // Save code in session
+          // req.session.sentCode = generatedCode; // Save code in session
           const response = await userModel.findByIdAndUpdate(
             req.user.id,
             { otp: generatedCode },

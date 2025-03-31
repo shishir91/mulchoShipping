@@ -4,14 +4,14 @@ import { useLocation } from "react-router-dom";
 const PaymentDetail = () => {
   const location = useLocation();
   const [payment, setPayment] = useState(location.state);
+  const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (location.state) {
       setPayment(location.state);
     }
   }, [location.state]);
-
-  console.log(payment);
 
   return (
     <div className="p-6 max-w-4xl mx-auto bg-white shadow-lg rounded-lg mt-6">
@@ -24,17 +24,25 @@ const PaymentDetail = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div className="bg-gray-50 p-4 rounded-lg shadow">
             <p className="font-semibold text-gray-700">Product Name:</p>
-            <p className="text-gray-500">{payment.source[0].productName}</p>
+            <p className="text-gray-500">
+              {payment.source[0].product[0].productName}
+            </p>
           </div>
           <div className="bg-gray-50 p-4 rounded-lg shadow">
             <p className="font-semibold text-gray-700">Quantity:</p>
             <p className="text-gray-500">{payment.source[0].qty}</p>
           </div>
           <div className="bg-gray-50 p-4 rounded-lg shadow">
-            <p className="font-semibold text-gray-700">Price:</p>
-            <p className="text-gray-500">${payment.source[0].price}</p>
+            <p className="font-semibold text-gray-700">Product Price:</p>
+            <p className="text-gray-500">
+              ${payment.source[0].product[0].price}
+            </p>
           </div>
           <div className="bg-gray-50 p-4 rounded-lg shadow">
+            <p className="font-semibold text-gray-700">Order Price:</p>
+            <p className="text-gray-500">${payment.source[0].price}</p>
+          </div>
+          <div className="bg-gray-50 p-4 rounded-lg shadow sm:col-span-2">
             <p className="font-semibold text-gray-700">Customer Name:</p>
             <p className="text-gray-500">{payment.source[0].customerName}</p>
           </div>
@@ -68,15 +76,15 @@ const PaymentDetail = () => {
         <div className="flex items-center justify-between mb-6">
           <div className="bg-gray-50 p-4 rounded-lg shadow">
             <p className="font-semibold text-gray-700">Commission Amount:</p>
-            <p className="text-gray-500">${payment.amount}</p>
+            <p className="text-gray-500">${payment.source[0].commission}</p>
           </div>
           <div className="bg-gray-50 p-4 rounded-lg shadow">
             <button
-              onClick={() => {}}
+              onClick={() => setShowModal(true)}
               className="bg-green-500 hover:bg-green-600 text-white font-semibold mx-4 py-2 px-4 rounded-lg shadow"
             >
               Payment Done
-            </button> 
+            </button>
           </div>
         </div>
         <div className="bg-gray-50 p-4 rounded-lg shadow col-span-1 sm:col-span-2">
@@ -87,6 +95,29 @@ const PaymentDetail = () => {
           />
         </div>
       </section>
+
+      {/* //Modal */}
+      {/* Modal */}
+      {showModal && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-lg mx-auto shadow-lg">
+            <h2 className="text-xl font-semibold mb-4">
+              Upload Proof ScreenShot
+            </h2>
+            <div className="flex justify-end mt-4">
+              <button
+                onClick={() => setShowModal(false)}
+                className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-lg mr-2"
+              >
+                Cancel
+              </button>
+              <button className="bg-green-500 hover:bg-green-600 text-gray-800 font-semibold py-2 px-4 rounded-lg mr-2">
+                Done
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

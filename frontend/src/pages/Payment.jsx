@@ -3,11 +3,14 @@ import { CurrencyDollarIcon } from "@heroicons/react/24/solid";
 import { ToastContainer, toast } from "react-toastify";
 import api from "../api/config.js";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const Payment = () => {
   const [paymentData, setPaymentData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const token = localStorage.getItem("token");
+
+  const { authState } = useAuth();
+  const { userInfo: user, token } = authState;
   const navigate = useNavigate();
 
   const queryParams = new URLSearchParams(location.search);
@@ -126,26 +129,37 @@ const Payment = () => {
               </thead>
               <tbody>
                 {filteredPayment.length > 0 ? (
-                  filteredPayment.map((payment, index) => (
-                    <tr
-                      style={{ cursor: "pointer" }}
-                      key={payment._id}
-                      className="border-b"
-                      onClick={() =>
-                        navigate("/PaymentDetail", { state: payment })
-                      }
-                    >
-                      <td className="p-3">{index + 1}</td>
-                      <td className="p-3">
-                        {new Date(payment.createdAt).toLocaleDateString()}
-                      </td>
-                      <td className="p-3">{payment.source[0].productName}</td>
-                      <td className="p-3">{payment.to[0].name}</td>
-                      <td className="p-3 text-green-600 font-medium">
-                        ${payment.amount}
-                      </td>
-                    </tr>
-                  ))
+                  filteredPayment
+                    .slice()
+                    .reverse()
+                    .map((payment, index) => (
+                      <tr
+                        style={{ cursor: "pointer" }}
+                        key={payment._id}
+                        className="border-b"
+                        onClick={() =>
+                          navigate("/PaymentDetail", { state: payment })
+                        }
+                      >
+                        <td className="p-3">{index + 1}</td>
+                        <td className="p-3">
+                          {new Date(payment.createdAt).toLocaleDateString()}
+                          {/* <br /> */}
+                          {/* {
+                            new Date(payment.createdAt)
+                              .toISOString()
+                              .split("T")[0]
+                          } */}
+                        </td>
+                        <td className="p-3">
+                          {payment.source[0].product[0].productName}
+                        </td>
+                        <td className="p-3">{payment.to[0].name}</td>
+                        <td className="p-3 text-green-600 font-medium">
+                          ${payment.source[0].commission}
+                        </td>
+                      </tr>
+                    ))
                 ) : (
                   <tr>
                     <td className="p-3 text-center" colSpan="5">

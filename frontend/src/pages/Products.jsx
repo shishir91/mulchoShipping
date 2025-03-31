@@ -14,6 +14,7 @@ import api from "../api/config.js";
 import { ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import Loading from "../components/Loading.jsx";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const Products = () => {
   const navigate = useNavigate();
@@ -22,8 +23,9 @@ const Products = () => {
   const [modelProductId, setModelProductId] = useState();
   const [modelStatus, setModelStatus] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const token = localStorage.getItem("token");
-  const user = JSON.parse(localStorage.getItem("userInfo"));
+  
+  const { authState } = useAuth();
+  const { userInfo: user, token } = authState;
 
   const [dropdownOpen, setDropdownOpen] = useState(null);
 

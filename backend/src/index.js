@@ -6,7 +6,6 @@ import mailRouter from "./routes/mailRoute.js";
 import orderRouter from "./routes/orderRoute.js";
 import adminRouter from "./routes/adminRoute.js";
 import productRouter from "./routes/productRoute.js";
-import session from "express-session";
 import cors from "cors";
 
 const app = express();
@@ -20,18 +19,6 @@ app.use(
     credentials: true,
   })
 );
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET, // Use a strong secret
-    resave: true,
-    saveUninitialized: true,
-    cookie: {
-      secure: false, // Set to true in production when using HTTPS
-      httpOnly: true,
-      maxAge: 1000 * 60 * 15,
-    },
-  })
-);
 
 app.use("/user/", userRoute);
 app.use("/mail/", mailRouter);
@@ -40,11 +27,10 @@ app.use("/admin/", adminRouter);
 app.use("/product/", productRouter);
 
 app.get("/", (req, res) => {
-  res.send("Server is Running...." + process.env.CLIENT_ORIGIN);
+  res.send("Server is Running.... " + process.env.CLIENT_ORIGIN);
 });
 
 const port = process.env.PORT || 8000;
-
 app.listen(port, async () => {
   console.log(`Server is Running in http://localhost:${port}`);
   try {
