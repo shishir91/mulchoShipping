@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import api from "../api/config.js";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "sonner";
 import {
   TagIcon,
   ShoppingCartIcon,
@@ -27,7 +27,7 @@ const AddProduct = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const { authState } = useAuth();
-  const { userInfo: user, token } = authState;
+  const { token } = authState;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -83,31 +83,27 @@ const AddProduct = () => {
       console.log("Response:", response.data);
       if (response.data.success) {
         toast.success(response.data.message, {
-          autoClose: 1000,
-          theme: "colored",
-          onClose: () => {
+          duration: 1000,
+          onAutoClose: () => {
             navigate("/products");
           },
         });
       } else {
         toast.error(response.data.message, {
-          autoClose: 1000,
-          theme: "colored",
+          duration: 1000,
         });
       }
     } catch (error) {
       setIsLoading(false);
       console.error("Error submitting form:", error);
       toast.error(error.message, {
-        autoClose: 2000,
-        theme: "colored",
+        duration: 2000,
       });
     }
   };
 
   return (
     <div className="p-4 sm:ml-64 mt-4">
-      <ToastContainer />
       {isLoading && <Loading />}
 
       <div className="max-w-lg mx-auto bg-white shadow-md rounded-lg p-6">
@@ -239,7 +235,7 @@ const AddProduct = () => {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 flex items-center justify-center"
+            className="w-full bg-blue-500 cursor-pointer text-white py-2 rounded-md hover:bg-blue-600 flex items-center justify-center"
           >
             <PlusIcon className="h-5 w-5 text-white mr-2" />
             Add Product

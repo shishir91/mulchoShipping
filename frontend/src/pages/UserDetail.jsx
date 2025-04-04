@@ -6,7 +6,7 @@ import {
   XCircleIcon,
 } from "@heroicons/react/24/outline";
 import { useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "sonner";
 import Loading from "../components/Loading.jsx";
 import api from "../api/config.js";
 import { useAuth } from "../context/AuthContext.jsx";
@@ -19,7 +19,7 @@ const UserDetail = () => {
   const userId = queryParams.get("user");
 
   const { authState } = useAuth();
-  const { userInfo, token } = authState;
+  const { token } = authState;
   const [showModal, setShowModal] = useState(false); // Track modal visibility
   const [reason, setReason] = useState("");
   const [status, setStatus] = useState("");
@@ -69,7 +69,6 @@ const UserDetail = () => {
 
   return (
     <div className="p-6 max-w-4xl mx-auto bg-white shadow-lg rounded-lg mt-6">
-      <ToastContainer />
       {isLoading && <Loading />}
 
       <div className="flex items-center justify-between mb-6">
@@ -88,7 +87,7 @@ const UserDetail = () => {
           <div>
             <button
               onClick={() => handleSubmit("verify")}
-              className="bg-green-500 hover:bg-green-600 text-white font-semibold mx-4 py-2 px-4 rounded-lg shadow"
+              className="bg-green-500 cursor-pointer hover:bg-green-600 text-white font-semibold mx-4 py-2 px-4 rounded-lg shadow"
             >
               Verify User
             </button>
@@ -96,7 +95,7 @@ const UserDetail = () => {
               onClick={() => {
                 setShowModal(true), setStatus("unVerify");
               }}
-              className="bg-green-500 hover:bg-green-600 text-white font-semibold mx-4 py-2 px-4 rounded-lg shadow"
+              className="bg-green-500 cursor-pointer hover:bg-green-600 text-white font-semibold mx-4 py-2 px-4 rounded-lg shadow"
             >
               Unverify User
             </button>
@@ -105,7 +104,7 @@ const UserDetail = () => {
         {user.status === "blocked" ? (
           <button
             onClick={() => handleSubmit("unBlock")}
-            className="bg-red-700 hover:bg-red-900 text-white font-semibold py-2 px-4 rounded-lg shadow"
+            className="bg-red-700 cursor-pointer hover:bg-red-900 text-white font-semibold py-2 px-4 rounded-lg shadow"
           >
             Unblock User
           </button>
@@ -114,7 +113,7 @@ const UserDetail = () => {
             onClick={() => {
               setShowModal(true), setStatus("block");
             }}
-            className="bg-red-700 hover:bg-red-900 text-white font-semibold py-2 px-4 rounded-lg shadow"
+            className="bg-red-700 cursor-pointer hover:bg-red-900 text-white font-semibold py-2 px-4 rounded-lg shadow"
           >
             Block User
           </button>
@@ -123,7 +122,7 @@ const UserDetail = () => {
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
+        <div className="fixed inset-0 bg-gray-600/50 flex justify-center items-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-lg mx-auto shadow-lg">
             {status === "unVerify" ? (
               <h2 className="text-xl font-semibold mb-4">Unverify User</h2>
@@ -140,21 +139,21 @@ const UserDetail = () => {
             <div className="flex justify-end mt-4">
               <button
                 onClick={() => setShowModal(false)} // Close modal
-                className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-lg mr-2"
+                className="bg-gray-300 cursor-pointer hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-lg mr-2"
               >
                 Cancel
               </button>
               {status === "unVerify" ? (
                 <button
                   onClick={() => handleSubmit("unVerify", reason)}
-                  className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg"
+                  className="bg-red-600 cursor-pointer hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg"
                 >
                   Confirm Unverify
                 </button>
               ) : (
                 <button
                   onClick={() => handleSubmit("block", reason)}
-                  className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg"
+                  className="bg-red-600 cursor-pointer hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg"
                 >
                   Confirm Block
                 </button>

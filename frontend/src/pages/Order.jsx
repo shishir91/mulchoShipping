@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
-
+import { toast } from "sonner";
 import api from "../api/config.js";
 import Loading from "../components/Loading.jsx";
 import Alerter from "../components/Alerter.jsx";
@@ -18,8 +17,25 @@ const Order = () => {
   const [showStatusMenu, setShowStatusMenu] = useState(false); // to toggle the status dropdown
   const [userOrders, setUserOrders] = useState([]);
 
-  const { authState } = useAuth();
+  const { updateUserInfo, authState } = useAuth();
   const { userInfo: user, token } = authState;
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      setIsLoading(true);
+      try {
+        const response = await api.get("/user", { headers: { token } });
+        if (response.data.success) {
+          await updateUserInfo(response.data.data);
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchUserData();
+  }, []);
 
   let filteredOrders;
 
@@ -32,27 +48,41 @@ const Order = () => {
     { name: "CONFIRMED", id: "confirmed" },
     { name: "IN-PROCESS", id: "inProcess" },
     { name: "DELIVERED", id: "delivered" },
-    { name: "EXCHANGED", id: "exchanged" },
     { name: "RETURNED", id: "returned" },
+    { name: "EXCHANGED", id: "exchanged" },
     { name: "CANCELLED", id: "cancelled" },
   ];
 
   const fetchUserOrders = async () => {
-    const response = await api.get("/order/getMyOrders", {
-      headers: { token },
-    });
-    if (response.data.success) {
-      setUserOrders(response.data.myOrders);
+    setIsLoading(true);
+    try {
+      const response = await api.get("/order/getMyOrders", {
+        headers: { token },
+      });
+      if (response.data.success) {
+        setUserOrders(response.data.myOrders);
+      }
+    } catch (error) {
+      console.error("Error fetching user orders:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
   const fetchAllOrders = async () => {
-    const response = await api.get("/admin/orders", {
-      headers: { token },
-    });
-    if (response.data.success) {
-      console.log(response);
+    setIsLoading(true);
+    try {
+      const response = await api.get("/admin/orders", {
+        headers: { token },
+      });
+      if (response.data.success) {
+        console.log(response);
 
-      setUserOrders(response.data.orders);
+        setUserOrders(response.data.orders);
+      }
+    } catch (error) {
+      console.error("Error fetching all orders:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -69,6 +99,7 @@ const Order = () => {
   }, [userOrders]);
 
   const handleCancelOrder = async (orderId) => {
+    setIsLoading(true);
     try {
       const response = await api.put(
         `/order/cancelOrder/${orderId}`,
@@ -79,9 +110,8 @@ const Order = () => {
       );
       if (response.data.success) {
         toast.success(response.data.message, {
-          autoClose: 1000,
-          theme: "colored",
-          onClose: () => {
+          duration: 1000,
+          onAutoClose: () => {
             setShowModal(false);
             // Re-fetch orders after cancellation
             user.role === "admin" ? fetchAllOrders() : fetchUserOrders();
@@ -91,6 +121,8 @@ const Order = () => {
       }
     } catch (error) {
       console.error("Error canceling order:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -146,9 +178,8 @@ const Order = () => {
     if (response.data.success) {
       setShowModal(false);
       toast.success(response.data.message, {
-        autoClose: 1000,
-        theme: "colored",
-        onClose: () => {
+        duration: 1000,
+        onAutoClose: () => {
           // Re-fetch orders after cancellation
           setContextMenu(null);
           user.role === "admin" ? fetchAllOrders() : fetchUserOrders();
@@ -160,7 +191,6 @@ const Order = () => {
 
   return (
     <div className="p-4 sm:ml-64">
-      <ToastContainer />
       {(user.status === "blocked" ||
         user.status === "underReview" ||
         !user.isUserVerified) && (
@@ -183,7 +213,7 @@ const Order = () => {
             <button
               onClick={() => navigate(`/orders?order=${status.id}`)}
               key={index}
-              className={`p-2 px-4 mb-2 rounded-md text-sm whitespace-nowrap ${
+              className={`p-2 px-4 mb-2 cursor-pointer rounded-md text-sm whitespace-nowrap ${
                 order
                   ? status.id == order
                     ? "bg-teal-700 text-white"
@@ -201,7 +231,7 @@ const Order = () => {
             user.isUserVerified && (
               <button
                 onClick={() => navigate("/addOrder")}
-                className="px-4 rounded-md text-sm bg-blue-500 text-white whitespace-nowrap"
+                className="px-4 cursor-pointer rounded-md text-sm bg-blue-500 text-white whitespace-nowrap"
               >
                 Add New Order
               </button>
@@ -272,7 +302,7 @@ const Order = () => {
                         </td>
                         {user.role === "admin" && (
                           <td className="p-2 border-b border-gray-300">
-                            {ord.orderFrom[0].name}
+                            {ord.orderFrom.name}
                           </td>
                         )}
                       </tr>
@@ -316,7 +346,7 @@ const Order = () => {
                         </td>
                         {user.role === "admin" && (
                           <td className="p-2 border-b border-gray-300">
-                            {ord.orderFrom[0].name}
+                            {ord.orderFrom.name}
                           </td>
                         )}
                         {ord.status == "confirmed" && user.role !== "admin" && (
@@ -327,7 +357,7 @@ const Order = () => {
                                 navigate(`/editOrder?orderId=${ord._id}`);
                               }}
                               className={
-                                "p-2 m-1 px-4 rounded-md text-sm bg-green-500 text-white"
+                                "p-2 m-1 px-4 cursor-pointer rounded-md text-sm bg-green-500 text-white"
                               }
                             >
                               Edit
@@ -340,7 +370,7 @@ const Order = () => {
                                 setModelStatus("canceled");
                               }}
                               className={
-                                "p-2 ml-1 px-4 rounded-md text-sm bg-red-500 text-white"
+                                "p-2 ml-1 px-4 cursor-pointer rounded-md text-sm bg-red-500 text-white"
                               }
                             >
                               Cancel
@@ -436,7 +466,7 @@ const Order = () => {
 
           {/* Modal */}
           {showModal && modelStatus == "canceled" && (
-            <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
+            <div className="fixed inset-0 bg-gray-600/50 flex justify-center items-center z-50">
               <div className="bg-white rounded-lg p-6 w-full max-w-lg mx-auto shadow-lg">
                 <h2 className="text-xl font-semibold mb-4">Cancel Order</h2>
                 <p className="text-gray-600 mb-2">
@@ -445,13 +475,13 @@ const Order = () => {
                 <div className="flex justify-end mt-4">
                   <button
                     onClick={() => setShowModal(false)} // Close modal
-                    className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-lg mr-2"
+                    className="bg-gray-300 cursor-pointer hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-lg mr-2"
                   >
                     No
                   </button>
                   <button
                     onClick={() => handleCancelOrder(cancelOrderId)}
-                    className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg"
+                    className="bg-red-600 cursor-pointer hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg"
                   >
                     Yes
                   </button>

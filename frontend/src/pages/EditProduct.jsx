@@ -10,7 +10,7 @@ import {
   XCircleIcon,
 } from "@heroicons/react/24/solid";
 import api from "../api/config.js";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import Loading from "../components/Loading.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
@@ -24,13 +24,22 @@ const EditProduct = () => {
   const navigate = useNavigate();
 
   const { authState } = useAuth();
-  const { userInfo: user, token } = authState;
+  const { token } = authState;
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    setFormData((prevData) => {
+      const updatedData = { ...prevData, [name]: value };
+
+      if (name === "commissionRate" && prevData.price) {
+        updatedData.commission = (
+          (parseFloat(value) / 100) *
+          parseFloat(prevData.price)
+        ).toFixed(2);
+      }
+
+      return updatedData;
+    });
   };
 
   const handleImageUpload = (e) => {
@@ -76,31 +85,27 @@ const EditProduct = () => {
       console.log("Response:", response.data);
       if (response.data.success) {
         toast.success(response.data.message, {
-          autoClose: 1000,
-          theme: "colored",
-          onClose: () => {
+          duration: 1000,
+          onAutoClose: () => {
             navigate("/products");
           },
         });
       } else {
         toast.error(response.data.message, {
-          autoClose: 1000,
-          theme: "colored",
+          duration: 1000,
         });
       }
     } catch (error) {
       setIsLoading(false);
       console.error("Error submitting form:", error);
       toast.error(error.message, {
-        autoClose: 2000,
-        theme: "colored",
+        duration: 2000,
       });
     }
   };
 
   return (
     <div className="p-4 sm:ml-64 mt-4">
-      <ToastContainer />
       {isLoading && <Loading />}
 
       <div className="max-w-lg mx-auto bg-white shadow-md rounded-lg p-6">
@@ -143,18 +148,36 @@ const EditProduct = () => {
             </div>
           </div>
 
+          {/* Commission Rate */}
+          <div className="mb-4">
+            <label className="block text-gray-700">Commission Rate (%)</label>
+            <div className="flex items-center border border-gray-300 rounded-md p-2">
+              <CurrencyDollarIcon className="h-5 w-5 text-gray-400 mr-2" />
+              <input
+                type="number"
+                name="commissionRate"
+                value={formData.commissionRate}
+                onChange={handleChange}
+                required
+                className="w-full p-1 outline-none"
+                placeholder="Enter commission rate"
+              />
+            </div>
+          </div>
+
           {/* Commission */}
           <div className="mb-4">
-            <label className="block text-gray-700">Commission</label>
+            <label className="block text-gray-700">Commission (Rs.)</label>
             <div className="flex items-center border border-gray-300 rounded-md p-2">
               <CurrencyDollarIcon className="h-5 w-5 text-gray-400 mr-2" />
               <input
                 type="number"
                 name="commission"
                 value={formData.commission}
-                onChange={handleChange}
+                // onChange={handleChange}
+                disabled
                 required
-                className="w-full p-1 outline-none"
+                className="w-full p-1 outline-none cursor-not-allowed"
                 placeholder="Enter commission"
               />
             </div>
@@ -216,7 +239,7 @@ const EditProduct = () => {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 flex items-center justify-center"
+            className="w-full bg-blue-500 cursor-pointer text-white py-2 rounded-md hover:bg-blue-600 flex items-center justify-center"
           >
             <PlusIcon className="h-5 w-5 text-white mr-2" />
             Edit Product

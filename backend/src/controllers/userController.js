@@ -155,7 +155,13 @@ export default class UserController {
     try {
       const income = await transactionModel
         .find({ to: req.user._id })
-        .populate("to source", "-password -otp");
+        .populate([
+          { path: "to", select: "-password -otp" },
+          {
+            path: "source",
+            populate: { path: "product" },
+          },
+        ]);
       res.json({ success: true, income });
     } catch (err) {
       res.status(400).send(err);

@@ -3,14 +3,15 @@ import { UserIcon, EnvelopeIcon } from "@heroicons/react/24/outline";
 import { useNavigate } from "react-router-dom";
 import api from "../api/config.js";
 import { useAuth } from "../context/AuthContext.jsx";
+import Loading from "../components/Loading.jsx";
 
 const Users = () => {
   const [users, setUsers] = useState([]);
-
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
   const userStatus = queryParams.get("users");
-  
+
   const { authState } = useAuth();
   const { userInfo: user, token } = authState;
 
@@ -21,10 +22,17 @@ const Users = () => {
       navigate("/dashboard");
     }
     const fetchUsers = async () => {
-      const response = await api.get("/admin/users", { headers: { token } });
-      console.log(response);
-      if (response.data.success) {
-        setUsers(response.data.users);
+      setIsLoading(true);
+      try {
+        const response = await api.get("/admin/users", { headers: { token } });
+        console.log(response);
+        if (response.data.success) {
+          setUsers(response.data.users);
+        }
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchUsers();
@@ -55,6 +63,7 @@ const Users = () => {
 
   return (
     <div className="p-4 sm:ml-64 mt-4">
+      {isLoading && <Loading />}
       <h2 className="text-2xl font-semibold mb-4">Users List</h2>
       {/* Status Tabs */}
       <div className="flex flex-wrap md:flex-nowrap space-x-2 mb-4 overflow-x-auto scrollbar-hide">
@@ -68,7 +77,7 @@ const Users = () => {
           <button
             onClick={() => navigate(`/users?users=${status.id}`)}
             key={index}
-            className={`p-2 px-4 mb-2 rounded-md text-sm whitespace-nowrap ${
+            className={`p-2 px-4 mb-2 cursor-pointer rounded-md text-sm whitespace-nowrap ${
               userStatus
                 ? status.id == userStatus
                   ? "bg-teal-700 text-white"

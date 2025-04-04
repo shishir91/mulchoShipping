@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { ShoppingBag, Tag, HandCoins, ShoppingCart } from "lucide-react";
 import api from "../api/config.js";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import Loading from "../components/Loading.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
@@ -44,15 +44,13 @@ const MyProducts = () => {
       );
       if (response.data.success) {
         toast.success(response.data.message, {
-          autoClose: 1000,
-          theme: "colored",
-          onClose: () => window.location.reload(),
+          duration: 1000,
+          onAutoClose: () => window.location.reload(),
         });
       }
     } catch (error) {
       toast.error(error.message, {
-        autoClose: 2000,
-        theme: "colored",
+        duration: 2000,
       });
     } finally {
       setIsLoading(false);
@@ -61,7 +59,6 @@ const MyProducts = () => {
 
   return (
     <div className="p-4 sm:ml-64 mt-4">
-      <ToastContainer />
       {isLoading && <Loading />}
 
       <div className="max-w-7xl mx-auto bg-white shadow-md rounded-lg p-6">
@@ -72,7 +69,7 @@ const MyProducts = () => {
           </h2>
           <button
             onClick={() => navigate("/products")}
-            className="bg-blue-500 text-white py-2 px-4 rounded-md flex items-center hover:bg-blue-600"
+            className="bg-blue-500 cursor-pointer text-white py-2 px-4 rounded-md flex items-center hover:bg-blue-600"
           >
             <ShoppingCart className="h-5 w-5 mr-3 " />
             All Products
@@ -105,7 +102,7 @@ const MyProducts = () => {
                 {user.role === "user" && (
                   <button
                     onClick={() => handleRemoveProduct(product._id)}
-                    className="w-full bg-green-700 mb-1 text-white py-2 rounded-md flex items-center justify-center hover:bg-green-900"
+                    className="w-full cursor-pointer bg-green-700 mb-1 text-white py-2 rounded-md flex items-center justify-center hover:bg-green-900"
                   >
                     Remove from My Product
                   </button>
@@ -114,7 +111,7 @@ const MyProducts = () => {
                   onClick={() =>
                     navigate(`/productDetail?productId=${product._id}`)
                   }
-                  className="w-full bg-blue-500 text-white py-2 rounded-md flex items-center justify-center hover:bg-blue-600"
+                  className="w-full bg-blue-500 cursor-pointer text-white py-2 rounded-md flex items-center justify-center hover:bg-blue-600"
                 >
                   View Details
                 </button>

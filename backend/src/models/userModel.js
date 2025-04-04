@@ -32,7 +32,7 @@ const userModel = mongoose.Schema(
         ref: "Product",
       },
     ],
-    totalOrders: { type: Number, default: 0 },
+    totalSales: { type: Number, default: 0 },
     tier: {
       type: String,
       enum: ["Bronze", "Silver", "Gold", "Platinum", "Diamond"],
@@ -46,17 +46,17 @@ const userModel = mongoose.Schema(
 );
 
 // Function to determine user tier and commission rate
-const getTierAndCommission = (totalOrders) => {
-  if (totalOrders >= 100000) return { tier: "Diamond", commissionRate: 5 };
-  if (totalOrders >= 50000) return { tier: "Platinum", commissionRate: 3 };
-  if (totalOrders >= 25000) return { tier: "Gold", commissionRate: 2 };
-  if (totalOrders >= 10000) return { tier: "Silver", commissionRate: 1 };
+const getTierAndCommission = (totalSales) => {
+  if (totalSales >= 100000) return { tier: "Diamond", commissionRate: 5 };
+  if (totalSales >= 50000) return { tier: "Platinum", commissionRate: 3 };
+  if (totalSales >= 25000) return { tier: "Gold", commissionRate: 2 };
+  if (totalSales >= 10000) return { tier: "Silver", commissionRate: 1 };
   return { tier: "Bronze", commissionRate: 0 };
 };
 
 // Middleware to update tier and commission before saving
 userModel.pre("save", function (next) {
-  const { tier, commissionRate } = getTierAndCommission(this.totalOrders);
+  const { tier, commissionRate } = getTierAndCommission(this.totalSales);
   this.tier = tier;
   this.commissionRate = commissionRate;
   next();

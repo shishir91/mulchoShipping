@@ -7,6 +7,7 @@ import orderRouter from "./routes/orderRoute.js";
 import adminRouter from "./routes/adminRoute.js";
 import productRouter from "./routes/productRoute.js";
 import cors from "cors";
+import userModel from "./models/userModel.js";
 
 const app = express();
 
@@ -30,12 +31,26 @@ app.get("/", (req, res) => {
   res.send("Server is Running.... " + process.env.CLIENT_ORIGIN);
 });
 
+// Migration function
+async function runMigration() {
+  try {
+    await userModel.updateMany(
+      {},
+      { $set: { owner: "Unknown", establishedYear: 2000 } }
+    );
+    console.log("✅ Migration 1 complete!");
+  } catch (error) {
+    console.error("❌ Migration failed:", error);
+  }
+}
+
 const port = process.env.PORT || 8000;
 app.listen(port, async () => {
   console.log(`Server is Running in http://localhost:${port}`);
   try {
     const conn = await mongoose.connect(process.env.MONGODBCONNECTIONSTRING);
     console.log(`MongoDB Connected: ${conn.connection.host}`);
+    await runMigration();
   } catch (error) {
     console.log(`Error: ${error.message}`);
     // process.exit();

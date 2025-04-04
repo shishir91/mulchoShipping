@@ -67,8 +67,8 @@ function Navbar() {
   const logoutHandler = async () => {
     await updateAuth();
     toast.success("User Logged Out", {
-      autoClose: 1000,
-      onClose: () => navigate("/"),
+      duration: 1000,
+      onAutoClose: () => navigate("/"),
     });
   };
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "sonner";
 import { HandCoins } from "lucide-react";
 import {
   ShoppingCartIcon,
@@ -15,15 +15,16 @@ import {
 
 import api from "../api/config.js";
 import { useAuth } from "../context/AuthContext.jsx";
+import Loading from "../components/Loading.jsx";
 
 const AddOrder = () => {
   const navigate = useNavigate();
-
-  const { authState } = useAuth();
+  const { updateUserInfo, authState } = useAuth();
   const { userInfo: user, token } = authState;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [myProducts, setMyProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState();
+  const [isLoading, setIsLoading] = useState(true);
   const [formData, setFormData] = useState({
     product: "",
     qty: "",
@@ -38,7 +39,21 @@ const AddOrder = () => {
 
   //get my products
   useEffect(() => {
+    const fetchUserData = async () => {
+      setIsLoading(true);
+      try {
+        const response = await api.get("/user", { headers: { token } });
+        if (response.data.success) {
+          await updateUserInfo(response.data.data);
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
     const getMyProducts = async () => {
+      setIsLoading(true);
       try {
         const response = await api.get("/product/getMyProduct", {
           headers: { token },
@@ -51,12 +66,20 @@ const AddOrder = () => {
       } catch (error) {
         console.log(error);
         toast.error(error.message, {
-          autoClose: 2000,
-          theme: "colored",
+          duration: 2000,
         });
+      } finally {
+        setIsLoading(false);
       }
     };
+
+    fetchUserData();
     getMyProducts();
+    // try {
+    // } catch (error) {
+    //   console.log(error)
+    // }finally{
+    // }
   }, []);
 
   useEffect(() => {
@@ -72,8 +95,14 @@ const AddOrder = () => {
       setFormData((prevData) => ({
         ...prevData,
         price: product.price,
-        commission: parseFloat(product.commission).toFixed(2),
-        commissionRate: parseFloat(product.commissionRate) + parseFloat(user.commissionRate)
+        commission: (
+          ((parseFloat(product.commissionRate) +
+            parseFloat(user.commissionRate)) /
+            100) *
+          parseFloat(product.price)
+        ).toFixed(2),
+        commissionRate:
+          parseFloat(product.commissionRate) + parseFloat(user.commissionRate),
       }));
       // setCommission(product.commission);
     } else {
@@ -92,7 +121,13 @@ const AddOrder = () => {
       console.log(x);
       setFormData((prevData) => ({
         ...prevData,
-        commission: (parseFloat(selectedProduct.commission) + x).toFixed(2),
+        commission: (
+          ((parseFloat(selectedProduct.commissionRate) +
+            parseFloat(user.commissionRate)) /
+            100) *
+            parseFloat(selectedProduct.price) +
+          x
+        ).toFixed(2),
       }));
     }
   }, [formData.price]);
@@ -114,7 +149,7 @@ const AddOrder = () => {
     console.log(token);
 
     console.log("Form Submitted", formData);
-
+    setIsLoading(true);
     try {
       const response = await api.post(`/order/addOrder`, formData, {
         headers: { token },
@@ -123,9 +158,8 @@ const AddOrder = () => {
       if (response.data.success) {
         console.log(response);
         toast.success(response.data.message, {
-          autoClose: 1000,
-          theme: "colored",
-          onClose: () => {
+          duration: 1000,
+          onAutoClose: () => {
             setIsSubmitting(false);
             navigate("/orders");
           },
@@ -134,23 +168,24 @@ const AddOrder = () => {
         setIsSubmitting(false);
         console.log(response);
         toast.error(response.data.message, {
-          autoClose: 3000,
-          theme: "colored",
+          duration: 3000,
         });
       }
     } catch (e) {
       setIsSubmitting(false);
       console.log(e);
       toast.error(e, {
-        autoClose: 3000,
-        theme: "colored",
+        duration: 3000,
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="p-4 sm:ml-64 mt-4">
-      <ToastContainer />
+      {isLoading && <Loading />}
+
       <div className="max-w-md mx-auto bg-white shadow-md rounded-lg p-6">
         <h2 className="text-2xl font-semibold mb-4 flex items-center">
           <PlusIcon className="h-6 w-6 text-blue-500 mr-2" />
@@ -173,11 +208,13 @@ const AddOrder = () => {
                 <option selected disabled>
                   ---Select Product---
                 </option>
-                {myProducts.map((product) => (
-                  <option key={product._id} value={product._id}>
-                    {product.productName}
-                  </option>
-                ))}
+                {myProducts
+                  .filter((product) => product.status === "available")
+                  .map((product) => (
+                    <option key={product._id} value={product._id}>
+                      {product.productName}
+                    </option>
+                  ))}
               </select>
             </div>
           </div>
@@ -361,7 +398,7 @@ const AddOrder = () => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 flex items-center justify-center"
+            className="w-full bg-blue-500 cursor-pointer text-white p-2 rounded-md hover:bg-blue-600 flex items-center justify-center cursor-pointer"
           >
             <PlusIcon className="h-5 w-5 text-white mr-2" />
             Add Order

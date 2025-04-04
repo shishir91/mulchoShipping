@@ -64,8 +64,37 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Function to update only userInfo while keeping token unchanged
+  const updateUserInfo = async (newUserInfo) => {
+    setAuthState((prevState) => {
+      // 🔥 Prevent updates if userInfo is unchanged
+      if (JSON.stringify(prevState.userInfo) === JSON.stringify(newUserInfo)) {
+        return prevState; // Do nothing if data is the same
+      }
+
+      // Update state
+      return { ...prevState, userInfo: newUserInfo };
+    });
+
+    if (newUserInfo) {
+      const encryptedUserInfo = CryptoJS.AES.encrypt(
+        JSON.stringify(newUserInfo),
+        import.meta.env.VITE_CLIENT_SECRET_KEY
+      ).toString();
+      Cookies.set("userInfo", encryptedUserInfo, {
+        expires: 3650,
+        secure: true,
+        sameSite: "Strict",
+      });
+    } else {
+      Cookies.remove("userInfo");
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ authState, updateAuth, isLoading }}>
+    <AuthContext.Provider
+      value={{ authState, updateAuth, updateUserInfo, isLoading }}
+    >
       {children}
     </AuthContext.Provider>
   );

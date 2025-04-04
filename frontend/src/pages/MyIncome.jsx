@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { CurrencyDollarIcon } from "@heroicons/react/24/solid";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "sonner";
 import api from "../api/config.js";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
+import Loading from "../components/Loading.jsx";
 
 const MyIncome = () => {
   const [totalIncome, setTotalIncome] = useState(0);
@@ -11,7 +12,7 @@ const MyIncome = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   const { authState } = useAuth();
-  const { userInfo: user, token } = authState;
+  const { token } = authState;
   const navigate = useNavigate();
 
   const queryParams = new URLSearchParams(location.search);
@@ -29,7 +30,7 @@ const MyIncome = () => {
             response.data.income
               .filter((income) => income.status === "sent")
               .reduce((acc, item) => {
-                return acc + item.amount;
+                return acc + item.source.commission;
               }, 0)
           );
         }
@@ -46,12 +47,12 @@ const MyIncome = () => {
 
   if (status) {
     filteredIncome = incomeData.filter((income) => income.status === status);
-    console.log(filteredIncome);
   }
 
   return (
     <div className="p-4 sm:ml-64 mt-4">
-      <ToastContainer />
+      {isLoading && <Loading />}
+
       <div className="max-w-7xl mx-auto bg-white shadow-md rounded-lg p-6">
         <h2 className="text-3xl font-semibold mb-4 flex items-center">
           <CurrencyDollarIcon className="h-8 w-8 text-green-500 mr-2" />
@@ -84,9 +85,9 @@ const MyIncome = () => {
                       key={index}
                       className="flex justify-between items-center py-2 border-b"
                     >
-                      <span>{income.source[0].productName}</span>
+                      <span>{income.source.product.productName}</span>
                       <span className="font-medium text-green-600">
-                        ${income.source[0].price}
+                        ${income.source.commission}
                       </span>
                     </li>
                   ))}
@@ -106,13 +107,21 @@ const MyIncome = () => {
           <div className="flex space-x-4 mb-4">
             <button
               onClick={() => navigate("/income?status=sent")}
-              className={`p-2 px-4 rounded-md text-sm bg-gray-200 text-gray-700 hover:bg-teal-700 hover:text-white`}
+              className={`p-2 px-4 cursor-pointer rounded-md text-sm bg-gray-200 text-gray-700 hover:bg-teal-700 hover:text-white ${
+                !status || status == "sent"
+                  ? "bg-teal-700 text-white"
+                  : "bg-gray-200 text-gray-700"
+              }`}
             >
               RECEIVED
             </button>
             <button
               onClick={() => navigate("/income?status=pending")}
-              className={`p-2 px-4 rounded-md text-sm bg-gray-200 text-gray-700 hover:bg-teal-700 hover:text-white`}
+              className={`p-2 px-4 cursor-pointer rounded-md text-sm bg-gray-200 text-gray-700 hover:bg-teal-700 hover:text-white ${
+                status == "pending"
+                  ? "bg-teal-700 text-white"
+                  : "bg-gray-200 text-gray-700"
+              }`}
             >
               PENDING
             </button>
@@ -124,7 +133,7 @@ const MyIncome = () => {
                 <tr className="bg-gray-300">
                   <th className="p-3">#</th>
                   <th className="p-3">Date</th>
-                  <th className="p-3">Source</th>
+                  <th className="p-3">Item</th>
                   <th className="p-3">Amount ($)</th>
                 </tr>
               </thead>
@@ -134,11 +143,13 @@ const MyIncome = () => {
                     <tr key={income._id} className="border-b">
                       <td className="p-3">{index + 1}</td>
                       <td className="p-3">
-                        {new Date(income.createdAt).toLocaleDateString()}
+                        {new Date(income.createdAt).toISOString().split("T")[0]}
                       </td>
-                      <td className="p-3">{income.source[0].productName}</td>
+                      <td className="p-3">
+                        {income.source.product.productName}
+                      </td>
                       <td className="p-3 text-green-600 font-medium">
-                        ${income.amount}
+                        Rs. {income.source.commission}
                       </td>
                     </tr>
                   ))

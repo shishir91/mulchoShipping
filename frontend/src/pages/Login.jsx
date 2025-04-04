@@ -12,23 +12,23 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "sonner";
 import api from "../api/config.js";
 import { useAuth } from "../context/AuthContext.jsx";
+import Loading from "../components/Loading.jsx";
 
 export default function Login() {
   const [formData, setFormData] = useState({});
   const navigate = useNavigate();
-  const { updateAuth, authState } = useAuth();
-  const { userInfo: user, token } = authState;
-
+  const { updateAuth } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
   const handelChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log(formData);
+    setIsLoading(true);
     try {
       const response = await api.post("/user/login", { ...formData });
       console.log(response);
@@ -36,24 +36,25 @@ export default function Login() {
         await updateAuth(response.data.userData, response.data.token);
         window.dispatchEvent(new Event("auth-change"));
         toast.success(response.data.message, {
-          autoClose: 1000,
-          theme: "colored",
-          onClose: () => navigate("/dashboard"),
+          duration: 1000,
+          onAutoClose: () => navigate("/dashboard"),
         });
       } else {
         toast.error(response.data.message, {
-          autoClose: 2000,
-          theme: "colored",
+          duration: 2000,
         });
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="mt-20">
-      <ToastContainer />
+      {isLoading && <Loading />}
+
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box

@@ -2,12 +2,12 @@ import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { EnvelopeIcon } from "@heroicons/react/24/outline";
 import api from "../api/config.js";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "sonner";
 import Loading from "../components/Loading.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
 
 const EmailVerification = () => {
-  const { updateAuth, authState } = useAuth();
+  const { updateUserInfo, authState } = useAuth();
   const { userInfo, token } = authState;
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -83,23 +83,20 @@ const EmailVerification = () => {
     console.log(response);
     setLoading(false);
     if (response.data.success) {
-      await updateAuth(response.data.data, token);
+      await updateUserInfo(response.data.data);
       toast.success(response.data.message, {
-        autoClose: 1000,
-        theme: "colored",
-        onClose: () => navigate("/userVerification"),
+        duration: 1000,
+        onAutoClose: () => navigate("/userVerification"),
       });
     } else {
       toast.error(response.data.message, {
-        autoClose: 2000,
-        theme: "colored",
+        duration: 2000,
       });
     }
   };
 
   return (
     <div className="p-4 sm:ml-64 mt-10">
-      <ToastContainer />
       <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-lg">
         {loading && <Loading />}
         <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
@@ -132,7 +129,7 @@ const EmailVerification = () => {
           <button
             disabled={loading}
             type="submit"
-            className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            className="w-full bg-blue-500 cursor-pointer text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
             Verify
           </button>

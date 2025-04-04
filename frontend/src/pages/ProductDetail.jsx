@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
 import api from "../api/config";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "sonner";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import Loading from "../components/Loading";
 
 const ProductDetail = () => {
   const queryParams = new URLSearchParams(location.search);
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const productId = queryParams.get("productId");
-
   const { authState } = useAuth();
-  const { userInfo: user, token } = authState;
+  const { token } = authState;
   const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
@@ -24,15 +24,13 @@ const ProductDetail = () => {
           setProduct(response.data.product);
         } else {
           toast.error(response.data.message, {
-            autoClose: 2000,
-            theme: "colored",
+            duration: 2000,
           });
         }
       } catch (error) {
         console.error("Error fetching product:", error);
         toast.error("Error fetching product details", {
-          autoClose: 2000,
-          theme: "colored",
+          duration: 2000,
         });
       } finally {
         setLoading(false);
@@ -76,7 +74,8 @@ const ProductDetail = () => {
 
   return (
     <div className="p-4 sm:ml-64 mt-4">
-      <ToastContainer />
+      {loading && <Loading />}
+
       <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-md p-6">
         <h1 className="text-2xl font-bold text-gray-800 mb-4">
           Product Details
@@ -88,69 +87,53 @@ const ProductDetail = () => {
         </h2>
 
         {/* Product Image Slider */}
-
-        <div id="default-carousel" className="relative w-2/3 overflow-hidden">
+        <div className="relative w-full max-w-lg overflow-hidden rounded-lg shadow-lg">
           {/* Carousel Wrapper */}
           <div
             className="flex transition-transform duration-700 ease-in-out"
-            style={{
-              transform: `translateX(-${activeIndex * 50}%)`,
-              width: `${product.images.length * 65}%`,
-            }}
+            style={{ transform: `translateX(-${activeIndex * 100}%)` }}
           >
-            {/* Items */}
-            {product.images.map((image, index) => (
+            {product?.images?.map((image, index) => (
               <div
                 key={index}
-                className="h-56 md:h-96 flex-shrink-0"
-                style={{ flexBasis: "50%" }}
+                className="min-w-full flex justify-center items-center"
               >
                 <img
                   src={image}
-                  className="w-full h-full object-cover rounded-lg"
+                  className="w-full h-64 object-contain rounded-lg"
                   alt={`Product Slide ${index + 1}`}
                 />
               </div>
             ))}
           </div>
 
-          {/* Slider Indicators */}
-          <div className="absolute z-30 flex -translate-x-1/2 bottom-5 left-1/2 space-x-3">
-            {product.images.map((_, index) => (
+          {/* Slider Controls */}
+          <button
+            className="absolute cursor-pointer top-1/2 left-4 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70"
+            onClick={handlePrev}
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+
+          <button
+            className="absolute cursor-pointer top-1/2 right-4 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70"
+            onClick={handleNext}
+          >
+            <ArrowRight className="w-5 h-5" />
+          </button>
+
+          {/* Dots Indicators */}
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+            {product?.images?.map((_, index) => (
               <button
                 key={index}
-                type="button"
-                className={`w-3 h-3 rounded-full ${
-                  activeIndex === index ? "bg-black" : "bg-gray-400"
+                className={`w-3 h-3 cursor-pointer rounded-full transition-all duration-300 ${
+                  activeIndex === index ? "bg-white scale-125" : "bg-gray-400"
                 }`}
-                aria-current={activeIndex === index}
-                aria-label={`Slide ${index + 1}`}
                 onClick={() => setActiveIndex(index)}
               ></button>
             ))}
           </div>
-
-          {/* Slider Controls */}
-          <button
-            type="button"
-            className="absolute top-0 left-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none"
-            onClick={handlePrev}
-          >
-            <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
-              <ArrowLeft className="w-4 h-4 text-white dark:text-gray-800" />
-              <span className="sr-only">Previous</span>
-            </span>
-          </button>
-          <button
-            type="button"
-            className="absolute top-0 right-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none"
-            onClick={handleNext}
-          >
-            <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
-              <ArrowRight className="w-4 h-4 text-white dark:text-gray-800" />
-              <span className="sr-only">Next</span>
-            </span>
-          </button>
         </div>
 
         {/* Product Information */}
@@ -160,6 +143,9 @@ const ProductDetail = () => {
           </p>
           <p className="text-gray-600">
             <strong>Price:</strong> NPR {product.price}
+          </p>
+          <p className="text-gray-600">
+            <strong>Commission Rate:</strong> {product.commissionRate}%
           </p>
           <p className="text-gray-600">
             <strong>Commission:</strong> NPR {product.commission}
@@ -176,14 +162,14 @@ const ProductDetail = () => {
               {product.status.charAt(0).toUpperCase() + product.status.slice(1)}
             </span>
           </p>
-          <p className="text-gray-600">
+          {/* <p className="text-gray-600">
             <strong>Created At:</strong>{" "}
             {new Date(product.createdAt).toLocaleString()}
           </p>
           <p className="text-gray-600">
             <strong>Updated At:</strong>{" "}
             {new Date(product.updatedAt).toLocaleString()}
-          </p>
+          </p> */}
         </div>
       </div>
     </div>

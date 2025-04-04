@@ -20,21 +20,19 @@ const Dashboard = () => {
   const [userOrders, setUserOrders] = useState([]);
   const [totalUsers, setTotalUsers] = useState(0);
 
-  const { updateAuth, authState } = useAuth();
+  const { updateUserInfo, authState } = useAuth();
   const { userInfo: user, token } = authState;
 
   let cancelledCount = 0;
   let returnedCount = 0;
   let deliveredCount = 0;
 
-  // const fetchUserData = async () => {
-  //   const response = await api.get("/user", { headers: { token } });
-  //   if (response.data.success) {
-  //     setUser(response.data.data);
-  //     localStorage.setItem("userInfo", JSON.stringify(response.data.data));
-  //     // await updateAuth(response.data.data, token)
-  //   }
-  // };
+  const fetchUserData = async () => {
+    const response = await api.get("/user", { headers: { token } });
+    if (response.data.success) {
+      await updateUserInfo(response.data.data)
+    }
+  };
   const fetchAllUsers = async () => {
     const response1 = await api.get("/admin/users", { headers: { token } });
     if (response1.data.success) {
@@ -60,7 +58,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (!hasFetched.current) {
-      // fetchUserData();
+      fetchUserData();
       if (user.role == "admin") {
         fetchAllOrders();
         fetchAllUsers();

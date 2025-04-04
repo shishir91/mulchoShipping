@@ -35,25 +35,29 @@ const App = () => {
   useEffect(() => {
     const handleStorageChange = async () => {
       const encryptedData = Cookies.get("userInfo");
-      if (encryptedData) {
-        const bytes = CryptoJS.AES.decrypt(
-          encryptedData,
-          import.meta.env.VITE_CLIENT_SECRET_KEY
-        );
-        const userInfo = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-        const token = Cookies.get("token");
+      if (!encryptedData) return;
 
-        // 🔥 Update global auth state
+      const bytes = CryptoJS.AES.decrypt(
+        encryptedData,
+        import.meta.env.VITE_CLIENT_SECRET_KEY
+      );
+      const userInfo = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+      const token = Cookies.get("token");
+
+      // 🔥 Prevent infinite loop: only update if changed
+      if (
+        JSON.stringify(authState.userInfo) !== JSON.stringify(userInfo) ||
+        authState.token !== token
+      ) {
         await updateAuth(userInfo, token);
       }
     };
 
-    // Listen for storage changes
     window.addEventListener("storage", handleStorageChange);
     return () => {
       window.removeEventListener("storage", handleStorageChange);
     };
-  }, []);
+  }, [authState]); // Depend on authState to check changes
 
   const ProtectedRoute = ({ children }) => {
     if (isLoading) {
@@ -80,6 +84,7 @@ const App = () => {
     <Router>
       {/* <Loading/> */}
       <Navbar />
+      <Toaster richColors expand={false} position="top-right" />
       <Routes>
         {/* Public Routes */}
         <Route

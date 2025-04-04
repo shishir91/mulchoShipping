@@ -234,25 +234,49 @@ export default class AdminController {
       let updatedOrder = await orderModel.findByIdAndUpdate(orderId, {
         status,
       });
-      console.log(updatedOrder);
       updatedOrder = await orderModel
         .findById(orderId)
         .populate("orderFrom", "-password -otp");
-      console.log(updatedOrder);
-      console.log(updatedOrder.orderFrom[0].email);
       const response = await mailController.notifyUserAboutOrders(
-        updatedOrder.orderFrom[0].email,
+        updatedOrder.orderFrom.email,
         `Your order for ${updatedOrder.productName} is ${updatedOrder.status}`
       );
-      console.log(response);
 
       let transaction;
-      if (updatedOrder.status === "delivered") {
-        transaction = await transactionModel.create({
+      if (updatedOrder.status === "returned") {
+        const user = await userModel.findById(updatedOrder.orderFrom);
+        if (user) {
+          user.totalSales -= updatedOrder.price;
+          await user.save();
+        }
+        // Delete the associated transaction if it exists
+        await transactionModel.findOneAndDelete({
           to: updatedOrder.orderFrom,
-          source: updatedOrder,
-          amount,
+          source: updatedOrder._id,
         });
+      }
+      if (
+        updatedOrder.status === "delivered" ||
+        updatedOrder.status === "exchanged"
+      ) {
+        const user = await userModel.findById(updatedOrder.orderFrom);
+        if (user) {
+          user.totalSales += updatedOrder.price;
+          await user.save();
+        }
+        // Check if transaction already exists before creating a new one
+        const existingTransaction = await transactionModel.findOne({
+          to: updatedOrder.orderFrom,
+          source: updatedOrder._id,
+        });
+
+        if (!existingTransaction) {
+          transaction = await transactionModel.create({
+            to: updatedOrder.orderFrom,
+            source: updatedOrder._id,
+            amount,
+          });
+        }
       }
 
       if (response) {
@@ -291,10 +315,10 @@ export default class AdminController {
   async getAllPayments(req, res) {
     try {
       const payments = await transactionModel.find().populate([
-        { path: "to" }, // Populating 'to' field
+        { path: "to" },
         {
-          path: "source", // Populating 'source' (Order)
-          populate: { path: "product" }, // Populating 'product' inside 'source' (Order)
+          path: "source",
+          populate: { path: "product" },
         },
       ]);
 
@@ -310,7 +334,10 @@ export default class AdminController {
   async paymentDone(req, res) {
     try {
       const { transactionID } = req.params;
-      const transaction = await transactionModel.findByIdAndUpdate(transactionID, {})
+      const transaction = await transactionModel.findByIdAndUpdate(
+        transactionID,
+        {}
+      );
     } catch (error) {
       console.log(error);
       return res.status(500).send(error);

@@ -9,7 +9,7 @@ export default class OrderController {
       const { orderId } = req.params;
       const order = await orderModel
         .findById(orderId)
-        .populate("orderFrom", "name")
+        .populate("orderFrom", "name commissionRate")
         .populate("product");
       if (order) {
         res.json({ success: true, order });

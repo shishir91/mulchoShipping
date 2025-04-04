@@ -9,7 +9,7 @@ import {
   UserIcon,
 } from "@heroicons/react/24/outline";
 import { useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "sonner";
 import Loading from "../components/Loading.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
 
@@ -19,7 +19,7 @@ const UserVerification = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const { updateAuth, authState } = useAuth();
+  const { updateUserInfo, authState } = useAuth();
   const { userInfo: user, token } = authState;
 
   useEffect(() => {
@@ -27,9 +27,8 @@ const UserVerification = () => {
       toast.success(
         "Your profile is under review. You will be notify soon once its done.",
         {
-          autoClose: 3000,
-          theme: "colored",
-          onClose: () => navigate("/dashboard"),
+          duration: 3000,
+          onAutoClose: () => navigate("/dashboard"),
         }
       );
     }
@@ -54,26 +53,23 @@ const UserVerification = () => {
     );
     setIsLoading(false);
     if (response.data.success) {
-      await updateAuth(response.data.data, token);
+      await updateUserInfo(response.data.data);
       toast.success(
         "Form Submitted. Your profile is under review. You will be notify soon once its done.",
         {
-          autoClose: 5000,
-          theme: "colored",
-          onClose: () => navigate("/dashboard"),
+          duration: 5000,
+          onAutoClose: () => navigate("/dashboard"),
         }
       );
     } else {
       toast.error(response.data.message, {
-        autoClose: 2000,
-        theme: "colored",
+        duration: 2000,
       });
     }
   };
 
   return (
     <div className="p-6 sm:ml-64">
-      <ToastContainer />
       <div className="max-w-md mx-auto bg-white rounded-lg shadow-lg">
         {isLoading && <Loading />}
         <h2 className="text-xl font-semibold text-gray-800 mb-6 flex items-center">
@@ -227,7 +223,7 @@ const UserVerification = () => {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            className="w-full bg-blue-500 cursor-pointer text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
             Submit Verification
           </button>

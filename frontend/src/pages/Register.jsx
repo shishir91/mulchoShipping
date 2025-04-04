@@ -1,5 +1,4 @@
 import React from "react";
-import "react-toastify/dist/ReactToastify.css";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -12,14 +11,16 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "sonner";
 import api from "../api/config.js";
 import { useAuth } from "../context/AuthContext.jsx";
+import Loading from "../components/Loading.jsx";
 
 export default function Register() {
   const [formData, setFormData] = useState({});
   const navigate = useNavigate();
   const { updateAuth } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handelChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -27,31 +28,32 @@ export default function Register() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log(formData);
+    setIsLoading(true);
     try {
       const response = await api.post("/user/register", { ...formData });
       console.log(response);
       if (response.data.success) {
         await updateAuth(response.data.userInfo, response.data.token);
         toast.success(response.data.message, {
-          autoClose: 1000,
-          theme: "colored",
-          onClose: () => navigate("/emailVerification"),
+          duration: 1000,
+          onAutoClose: () => navigate("/emailVerification"),
         });
       } else {
         toast.error(response.data.message, {
-          autoClose: 2000,
-          theme: "colored",
+          duration: 2000,
         });
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="mt-20">
-      <ToastContainer />
+      {isLoading && <Loading />}
+
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box

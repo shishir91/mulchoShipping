@@ -10,7 +10,7 @@ import { useAuth } from "../context/AuthContext";
 
 const Sidebar = () => {
   const { authState } = useAuth();
-  const { userInfo: user, token } = authState;
+  const { userInfo: user } = authState;
   return (
     <div>
       <aside

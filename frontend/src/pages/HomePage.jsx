@@ -31,21 +31,7 @@ const HomePage = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  // useEffect(() => {
-
-  // const { updateAuth, authState } = useAuth();
-  // const { userInfo, token } = authState;
-  //   if (userInfo && token) {
-  //     return navigate("/dashboard");
-  //   }
-  // }, []);
-
   return (
-    // <div className="mt-20 text-lg font-bold ">
-    //   HomePage is currently under development. You can Login / Register and view
-    //   other features
-    // </div>
-
     <div className="min-h-screen bg-[#b7ebb9]" id="home">
       {/* Main Content */}
       <div className="container mx-auto px-1 py-5 md:py-24">
