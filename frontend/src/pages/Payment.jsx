@@ -133,7 +133,7 @@ const Payment = () => {
                   <th className="p-3">Date</th>
                   <th className="p-3">Item</th>
                   <th className="p-3">From</th>
-                  <th className="p-3">Commission Amount ($)</th>
+                  <th className="p-3">Commission Amount</th>
                 </tr>
               </thead>
               <tbody>

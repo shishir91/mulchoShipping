@@ -6,6 +6,7 @@ import mailRouter from "./routes/mailRoute.js";
 import orderRouter from "./routes/orderRoute.js";
 import adminRouter from "./routes/adminRoute.js";
 import productRouter from "./routes/productRoute.js";
+import paymentRouter from "./routes/paymentRoute.js";
 import cors from "cors";
 import serverless from "serverless-http";
 
@@ -26,6 +27,8 @@ app.use("/mail/", mailRouter);
 app.use("/order/", orderRouter);
 app.use("/admin/", adminRouter);
 app.use("/product/", productRouter);
+app.use("/payment/", paymentRouter);
+
 
 app.get("/", (req, res) => {
   res.send("Server is Running.... " + process.env.CLIENT_ORIGIN);

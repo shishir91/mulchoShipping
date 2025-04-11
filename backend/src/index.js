@@ -1,13 +1,15 @@
 import express from "express";
 import "dotenv/config";
 import mongoose from "mongoose";
+import userModel from "./models/userModel.js";
 import userRoute from "./routes/userRoute.js";
 import mailRouter from "./routes/mailRoute.js";
 import orderRouter from "./routes/orderRoute.js";
 import adminRouter from "./routes/adminRoute.js";
 import productRouter from "./routes/productRoute.js";
+import paymentRouter from "./routes/paymentRoute.js";
 import cors from "cors";
-import userModel from "./models/userModel.js";
+import paymentModel from "./models/paymentModel.js";
 
 const app = express();
 
@@ -26,6 +28,7 @@ app.use("/mail/", mailRouter);
 app.use("/order/", orderRouter);
 app.use("/admin/", adminRouter);
 app.use("/product/", productRouter);
+app.use("/payment/", paymentRouter);
 
 app.get("/", (req, res) => {
   res.send("Server is Running.... " + process.env.CLIENT_ORIGIN);
@@ -34,7 +37,7 @@ app.get("/", (req, res) => {
 // Migration function
 async function runMigration() {
   try {
-    await userModel.updateMany(
+    await paymentModel.updateMany(
       {},
       { $set: { owner: "Unknown", establishedYear: 2000 } }
     );

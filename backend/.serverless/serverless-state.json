@@ -13,7 +13,13 @@
       "environment": {
         "MONGO_URI": "mongodb+srv://spyc91:YdeHxdwsCby19hkR@cluster0.ac1km.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
         "CLIENT_ORIGIN": "http://localhost:5173",
-        "SESSION_SECRET": "sessionsecretformulchooisaverytopsecretyouknow"
+        "SESSION_SECRET": "sessionsecretformulchooisaverytopsecretyouknow",
+        "JWT_SECRET": "mulchosecretisasecretwhichisaverytopsecret",
+        "EMAIL_USER": "mulcho456@gmail.com",
+        "EMAIL_PASS": "aril hzhw rpyu mxoi",
+        "CLOUDINARY_CLOUD_NAME": "spyc",
+        "CLOUDINARY_API_KEY": "217139327533211",
+        "CLOUDINARY_API_SECRET": "MiORpXox5QW_4LHzn6_dLJcVJ5I"
       },
       "stage": "dev",
       "versionFunctions": true,
@@ -110,7 +116,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-31d59c5a-b080",
-                "S3Key": "serverless/mulcho-shipping-backend/dev/1742051604894-2025-03-15T15:13:24.894Z/mulcho-shipping-backend.zip"
+                "S3Key": "serverless/mulcho-shipping-backend/dev/1744352301412-2025-04-11T06:18:21.412Z/mulcho-shipping-backend.zip"
               },
               "Handler": "src/server.handler",
               "Runtime": "nodejs22.x",
@@ -121,7 +127,13 @@
                 "Variables": {
                   "MONGO_URI": "mongodb+srv://spyc91:YdeHxdwsCby19hkR@cluster0.ac1km.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
                   "CLIENT_ORIGIN": "http://localhost:5173",
-                  "SESSION_SECRET": "sessionsecretformulchooisaverytopsecretyouknow"
+                  "SESSION_SECRET": "sessionsecretformulchooisaverytopsecretyouknow",
+                  "JWT_SECRET": "mulchosecretisasecretwhichisaverytopsecret",
+                  "EMAIL_USER": "mulcho456@gmail.com",
+                  "EMAIL_PASS": "aril hzhw rpyu mxoi",
+                  "CLOUDINARY_CLOUD_NAME": "spyc",
+                  "CLOUDINARY_API_KEY": "217139327533211",
+                  "CLOUDINARY_API_SECRET": "MiORpXox5QW_4LHzn6_dLJcVJ5I"
                 }
               },
               "Role": {
@@ -135,14 +147,14 @@
               "ApiLogGroup"
             ]
           },
-          "ApiLambdaVersionlTKfD7x5ur9rgoHfZ0F4b5NpU3kEZcT2IDIWtNRizQ": {
+          "ApiLambdaVersionsYpJQYhQVANnvJMmr4gI4Rfj5ukQX6HNSWnM2qj8QU": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "ApiLambdaFunction"
               },
-              "CodeSha256": "rMyjrdLT3KWOmxlzvdnkX93KHcvpaD5rZeXc6JFIfB8="
+              "CodeSha256": "JTWKrg9Yg5ED7uakqDCYySKWmjmi1s3RlSYLZh/UyrA="
             }
           },
           "ApiGatewayRestApi": {
@@ -267,7 +279,7 @@
               "ApiLambdaPermissionApiGateway"
             ]
           },
-          "ApiGatewayDeployment1742051591275": {
+          "ApiGatewayDeployment1744352284908": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -328,7 +340,7 @@
           "ApiLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "ApiLambdaVersionlTKfD7x5ur9rgoHfZ0F4b5NpU3kEZcT2IDIWtNRizQ"
+              "Ref": "ApiLambdaVersionsYpJQYhQVANnvJMmr4gI4Rfj5ukQX6HNSWnM2qj8QU"
             },
             "Export": {
               "Name": "sls-mulcho-shipping-backend-dev-ApiLambdaFunctionQualifiedArn"
@@ -393,7 +405,7 @@
         "timeout": 30,
         "runtime": "nodejs22.x",
         "vpc": {},
-        "versionLogicalId": "ApiLambdaVersionlTKfD7x5ur9rgoHfZ0F4b5NpU3kEZcT2IDIWtNRizQ"
+        "versionLogicalId": "ApiLambdaVersionsYpJQYhQVANnvJMmr4gI4Rfj5ukQX6HNSWnM2qj8QU"
       }
     },
     "configValidationMode": "warn",
@@ -416,7 +428,7 @@
     "artifact": "E:\\CCR\\C\\MERN_Stack\\mulcho\\backend\\.serverless\\mulcho-shipping-backend.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/mulcho-shipping-backend/dev/1742051604894-2025-03-15T15:13:24.894Z",
+    "artifactDirectoryName": "serverless/mulcho-shipping-backend/dev/1744352301412-2025-04-11T06:18:21.412Z",
     "artifact": "mulcho-shipping-backend.zip"
   }
 }

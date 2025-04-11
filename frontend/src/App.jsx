@@ -28,6 +28,7 @@ import ProductDetail from "./pages/ProductDetail";
 import AddProduct from "./pages/AddProduct";
 import EditProduct from "./pages/EditProduct";
 import MyProducts from "./pages/MyProducts";
+import { Toaster } from "sonner";
 import { useAuth } from "./context/AuthContext";
 
 const App = () => {
