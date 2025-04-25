@@ -4,18 +4,32 @@ import dayjs from "dayjs";
 import { useAuth } from "../context/AuthContext";
 import api from "../api/config.js";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
-const PaymentModal = ({ showModal, setShowModal, incomeData }) => {
+const PaymentModal = ({ showModal, setShowModal, incomeData, paymentList }) => {
   const [selectedIds, setSelectedIds] = useState([]);
   const { authState } = useAuth();
   const { token } = authState;
+  const navigate = useNavigate();
 
+  console.log(paymentList);
   // Filter pending incomes older than 7 days
+  // const filteredIncomes = incomeData.filter((income) => {
+  //   return dayjs().diff(dayjs(income.deliveredDate), "day") >= 7;
+  // });
+
+  // Step 1: Get all order IDs already used in paymentList
+  const paidOrderIds = new Set(
+    paymentList.flatMap((payment) => payment.orders)
+  );
+
+  // Step 2: Filter incomes based on delivery date AND not in paidOrderIds
   const filteredIncomes = incomeData.filter((income) => {
-    return (
-      income.status === "pending" &&
-      dayjs().diff(dayjs(income.createdAt), "day") >= 7
-    );
+    const isOlderThan7Days =
+      dayjs().diff(dayjs(income.deliveredDate), "day") >= 7;
+    const isNotAlreadyPaid = !paidOrderIds.has(income._id.toString());
+
+    return isOlderThan7Days && isNotAlreadyPaid;
   });
 
   const toggleSelect = (id) => {
@@ -53,7 +67,7 @@ const PaymentModal = ({ showModal, setShowModal, incomeData }) => {
       toast.error(err.response?.data?.message || "Payment request failed");
     }
   };
-
+  console.log("Filtered Incomes:", filteredIncomes);
   return (
     showModal && (
       <div
@@ -75,23 +89,31 @@ const PaymentModal = ({ showModal, setShowModal, incomeData }) => {
                 <tr className="text-left border-b">
                   <th className="p-2">Date</th>
                   <th className="p-2">Item</th>
-                  <th className="p-2">Amount</th>
-                  <th className="p-2">Status</th>
+                  <th className="p-2">Customer</th>
+                  <th className="p-2">Total Amount</th>
                   <th className="p-2 text-center">Action</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredIncomes.map((income) => (
-                  <tr key={income.id} className="border-b">
+                  <tr
+                    key={income._id}
+                    className="border-b cursor-pointer hover:bg-gray-300"
+                    onClick={() =>
+                      navigate(`/orderDetail?orderId=${income._id}`)
+                    }
+                  >
                     <td className="p-2">
-                      {dayjs(income.createdAt).format("YYYY-MM-DD")}
+                      {dayjs(income.deliveredDate).format("YYYY-MM-DD")}
                     </td>
+                    <td className="p-2"> {income.product.productName}</td>
+                    <td className="p-2">{income.customerName}</td>
                     <td className="p-2">
-                      {" "}
-                      {income.source.product.productName}
+                      Rs.{" "}
+                      {parseFloat(
+                        parseFloat(income.commission) * parseFloat(income.qty)
+                      ).toFixed(2)}
                     </td>
-                    <td className="p-2">Rs. {income.source.commission}</td>
-                    <td className="p-2 capitalize">{income.status}</td>
                     <td className="p-2 text-center">
                       <Button
                         variant={

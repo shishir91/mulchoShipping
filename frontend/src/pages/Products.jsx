@@ -121,7 +121,7 @@ const Products = () => {
       if (response.data.success) {
         toast.success(response.data.message, {
           duration: 1000,
-          onAutoClose: () => navigate("/myProducts"),
+          // onAutoClose: () => navigate("/myProducts"),
         });
       }
     } catch (e) {

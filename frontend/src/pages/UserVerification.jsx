@@ -27,7 +27,7 @@ const UserVerification = () => {
       toast.success(
         "Your profile is under review. You will be notify soon once its done.",
         {
-          duration: 3000,
+          duration: 2000,
           onAutoClose: () => navigate("/dashboard"),
         }
       );
@@ -44,27 +44,38 @@ const UserVerification = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (formData.referedby === "") {
+      delete formData.referedby;
+    }
     console.log(formData);
     setIsLoading(true);
-    const response = await api.put(
-      "/user/kyc",
-      { ...formData, payment: imageData },
-      { headers: { token, "Content-Type": "multipart/form-data" } }
-    );
-    setIsLoading(false);
-    if (response.data.success) {
-      await updateUserInfo(response.data.data);
-      toast.success(
-        "Form Submitted. Your profile is under review. You will be notify soon once its done.",
-        {
-          duration: 5000,
-          onAutoClose: () => navigate("/dashboard"),
-        }
+    try {
+      const response = await api.put(
+        "/user/kyc",
+        { ...formData, payment: imageData },
+        { headers: { token, "Content-Type": "multipart/form-data" } }
       );
-    } else {
-      toast.error(response.data.message, {
+      if (response.data.success) {
+        await updateUserInfo(response.data.data);
+        toast.success(
+          "Form Submitted. Your profile is under review. You will be notify soon once its done.",
+          {
+            duration: 5000,
+            onAutoClose: () => navigate("/dashboard"),
+          }
+        );
+      } else {
+        toast.error(response.data.message, {
+          duration: 2000,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong. Please try again.", {
         duration: 2000,
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 

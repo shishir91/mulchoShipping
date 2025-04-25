@@ -28,16 +28,17 @@ const MyIncome = () => {
         });
         if (response.data.success) {
           setIncomeData(response.data.income);
-          setTotalIncome(
-            response.data.income
-              .filter((income) => income.status === "sent")
-              .reduce((acc, item) => {
-                return acc + item.source.commission;
-              }, 0)
-          );
+          // setTotalIncome(
+          //   response.data.income
+          //     .filter((income) => income.status === "sent")
+          //     .reduce((acc, item) => {
+          //       return acc + item.source.commission;
+          //     }, 0)
+          // );
         }
       } catch (error) {
         toast.error("Failed to fetch income data.");
+        console.error("Error fetching income data:", error);
       } finally {
         setIsLoading(false);
       }
@@ -47,9 +48,9 @@ const MyIncome = () => {
         const response = await api.get("/payment/getPaymentList", {
           headers: { token },
         });
-        console.log(response.data);
         setPaymentList(response.data);
       } catch (error) {
+        toast.error("Failed to fetch payment data.");
         console.error("Error fetching payment data:", error);
       }
     }
@@ -221,6 +222,7 @@ const MyIncome = () => {
           showModal={showModal}
           setShowModal={setShowModal}
           incomeData={incomeData}
+          paymentList={paymentList}
         />
       )}
     </div>

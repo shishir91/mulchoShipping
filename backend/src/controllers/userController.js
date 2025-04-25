@@ -4,7 +4,10 @@ import orderModel from "../models/orderModel.js";
 import bcrypt from "bcryptjs";
 import validator from "validator";
 import generateToken from "../config/generateToken.js";
+import DatauriParser from "datauri/parser.js";
+import path from "path";
 import { v2 as cloudinary } from "cloudinary";
+import mongoose from "mongoose";
 
 export default class UserController {
   async register(req, res) {
@@ -102,25 +105,36 @@ export default class UserController {
     }
   }
 
-  async kyc(req, res, imageName) {
+  async kyc(req, res) {
     try {
-      const { phone, payment, dob, gender, fb, referedby } = req.body;
-
+      const { referedby } = req.body;
+      console.log("Body: ", req.body);
+      console.log("referedBy: ", referedby);
+      if (referedby && !mongoose.Types.ObjectId.isValid(referedby)) {
+        return res.json({ success: false, message: "Invalid referral ID." });
+      }
       const user = await userModel.findById(req.user.id);
-
-      console.log(user);
-      console.log(req.file);
-      console.log(req.body);
-      console.log(imageName);
-
       if (user.isEmailVerified) {
         cloudinary.config({
           cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
           api_key: process.env.CLOUDINARY_API_KEY,
           api_secret: process.env.CLOUDINARY_API_SECRET,
         });
-        const result = await cloudinary.uploader.upload(req.file.path);
-        console.log(result);
+
+        const parser = new DatauriParser();
+
+        const uploadToCloudinary = async (file) => {
+          // Get the extension
+          const ext = path.extname(file.originalname).toString();
+          const dataUri = parser.format(ext, file.buffer);
+
+          const result = await cloudinary.uploader.upload(dataUri.content);
+          return result;
+        };
+
+        // Usage:
+        const result = await uploadToCloudinary(req.file);
+        // console.log("Cloudinary result:", result);
 
         const verifyUser = await userModel.findByIdAndUpdate(
           req.user.id,
@@ -148,20 +162,28 @@ export default class UserController {
       }
     } catch (e) {
       console.log(e);
+      return res.status(400).send(e);
     }
   }
 
   async getIncome(req, res) {
     try {
-      const income = await transactionModel
-        .find({ to: req.user._id })
-        .populate([
-          { path: "to", select: "-password -otp" },
-          {
-            path: "source",
-            populate: { path: "product" },
-          },
-        ]);
+      // const income = await transactionModel
+      //   .find({ to: req.user._id })
+      //   .populate([
+      //     { path: "to", select: "-password -otp" },
+      //     {
+      //       path: "source",
+      //       populate: { path: "product" },
+      //     },
+      //   ]);
+      const income = await orderModel
+        .find({
+          orderFrom: req.user._id,
+          status: { $in: ["delivered", "exchanged"] },
+        })
+        .populate("product");
+
       res.json({ success: true, income });
     } catch (err) {
       res.status(400).send(err);

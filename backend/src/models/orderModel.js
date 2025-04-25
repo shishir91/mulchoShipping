@@ -14,6 +14,11 @@ const orderModel = mongoose.Schema(
     customerPhone: { type: String, required: true },
     customerLocation: { type: String, required: true },
     status: { type: String, required: true, default: "confirmed" },
+    deliveredDate: { type: Date },
+    paymentStatus: {
+      type: String,
+      enum: ["pending", "done"],
+    },
     orderFrom: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

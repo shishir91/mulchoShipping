@@ -242,7 +242,7 @@ export default class AdminController {
         `Your order for ${updatedOrder.productName} is ${updatedOrder.status}`
       );
 
-      let transaction;
+      // let transaction;
       if (updatedOrder.status === "returned") {
         const user = await userModel.findById(updatedOrder.orderFrom);
         if (user) {
@@ -250,46 +250,49 @@ export default class AdminController {
           await user.save();
         }
         // Delete the associated transaction if it exists
-        await transactionModel.findOneAndDelete({
-          to: updatedOrder.orderFrom,
-          source: updatedOrder._id,
-        });
+        //   await transactionModel.findOneAndDelete({
+        //     to: updatedOrder.orderFrom,
+        //     source: updatedOrder._id,
+        //   });
       }
       if (
         updatedOrder.status === "delivered" ||
         updatedOrder.status === "exchanged"
       ) {
+        updatedOrder = await orderModel.findByIdAndUpdate(orderId, {
+          deliveredDate: Date.now(),
+        });
         const user = await userModel.findById(updatedOrder.orderFrom);
         if (user) {
           user.totalSales += updatedOrder.price;
           await user.save();
         }
         // Check if transaction already exists before creating a new one
-        const existingTransaction = await transactionModel.findOne({
-          to: updatedOrder.orderFrom,
-          source: updatedOrder._id,
-        });
+        // const existingTransaction = await transactionModel.findOne({
+        //   to: updatedOrder.orderFrom,
+        //   source: updatedOrder._id,
+        // });
 
-        if (!existingTransaction) {
-          transaction = await transactionModel.create({
-            to: updatedOrder.orderFrom,
-            source: updatedOrder._id,
-            amount,
-          });
-        }
+        // if (!existingTransaction) {
+        //   transaction = await transactionModel.create({
+        //     to: updatedOrder.orderFrom,
+        //     source: updatedOrder._id,
+        //     amount,
+        //   });
+        // }
       }
 
       if (response) {
-        if (transaction) {
-          return res.json({
-            success: true,
-            message: `Order status changed to ${status}`,
-            message2: "And email also sent",
-            message3: "Transaction Created",
-            updatedOrder,
-            transaction,
-          });
-        }
+        // if (transaction) {
+        //   return res.json({
+        //     success: true,
+        //     message: `Order status changed to ${status}`,
+        //     message2: "And email also sent",
+        //     message3: "Transaction Created",
+        //     updatedOrder,
+        //     transaction,
+        //   });
+        // }
         return res.json({
           success: true,
           message: `Order status changed to ${status}`,

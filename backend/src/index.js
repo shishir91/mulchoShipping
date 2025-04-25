@@ -55,7 +55,7 @@ app.listen(port, async () => {
     console.log(`MongoDB Connected: ${conn.connection.host}`);
     await runMigration();
   } catch (error) {
-    console.log(`Error: ${error.message}`);
+    console.log(`Error: ${error.message} /n All error: ${error}`);
     // process.exit();
   }
 });

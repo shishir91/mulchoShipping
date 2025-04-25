@@ -33,7 +33,7 @@ export default function Register() {
       const response = await api.post("/user/register", { ...formData });
       console.log(response);
       if (response.data.success) {
-        await updateAuth(response.data.userInfo, response.data.token);
+        await updateAuth(response.data.userData, response.data.token);
         toast.success(response.data.message, {
           duration: 1000,
           onAutoClose: () => navigate("/emailVerification"),

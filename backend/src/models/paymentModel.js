@@ -15,8 +15,8 @@ const paymentModel = mongoose.Schema(
     amount: { type: Number },
     status: {
       type: String,
-      enum: ["request", "done"],
-      default: "request",
+      enum: ["pending", "done"],
+      default: "pending",
     },
     proof: { type: String },
   },
