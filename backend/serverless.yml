@@ -8,7 +8,7 @@ provider:
   memorySize: 512
   environment:
     MONGO_URI: ${env:MONGODBCONNECTIONSTRING}
-    CLIENT_ORIGIN: ${env:CLIENT_ORIGIN}
+    CLIENT_ORIGIN: "https://www.mulcho.com.np"
     SESSION_SECRET: ${env:SESSION_SECRET}
     JWT_SECRET: ${env:JWT_SECRET}
     EMAIL_USER: ${env:EMAIL_USER}

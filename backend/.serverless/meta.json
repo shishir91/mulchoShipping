@@ -1,6 +1,6 @@
 {
   "E:\\CCR\\C\\MERN_Stack\\mulcho\\backend\\serverless.yml": {
-    "versionFramework": "4.12.0",
+    "versionFramework": "4.14.1",
     "servicePath": "E:\\CCR\\C\\MERN_Stack\\mulcho\\backend\\serverless.yml",
     "serviceConfigFileName": "serverless.yml",
     "service": {
@@ -13,7 +13,7 @@
         "memorySize": 512,
         "environment": {
           "MONGO_URI": "mongodb+srv://spyc91:YdeHxdwsCby19hkR@cluster0.ac1km.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
-          "CLIENT_ORIGIN": "http://localhost:5173",
+          "CLIENT_ORIGIN": "https://www.mulcho.com.np",
           "SESSION_SECRET": "<REDACTED>",
           "JWT_SECRET": "<REDACTED>",
           "EMAIL_USER": "mulcho456@gmail.com",
@@ -117,7 +117,7 @@
               "Properties": {
                 "Code": {
                   "S3Bucket": "serverless-framework-deployments-ap-south-1-31d59c5a-b080",
-                  "S3Key": "serverless/mulcho-shipping-backend/dev/1744352301412-2025-04-11T06:18:21.412Z/mulcho-shipping-backend.zip"
+                  "S3Key": "serverless/mulcho-shipping-backend/dev/1745585455195-2025-04-25T12:50:55.195Z/mulcho-shipping-backend.zip"
                 },
                 "Handler": "src/server.handler",
                 "Runtime": "nodejs22.x",
@@ -127,7 +127,7 @@
                 "Environment": {
                   "Variables": {
                     "MONGO_URI": "mongodb+srv://spyc91:YdeHxdwsCby19hkR@cluster0.ac1km.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
-                    "CLIENT_ORIGIN": "http://localhost:5173",
+                    "CLIENT_ORIGIN": "https://www.mulcho.com.np",
                     "SESSION_SECRET": "<REDACTED>",
                     "JWT_SECRET": "<REDACTED>",
                     "EMAIL_USER": "mulcho456@gmail.com",
@@ -148,14 +148,14 @@
                 "ApiLogGroup"
               ]
             },
-            "ApiLambdaVersionsYpJQYhQVANnvJMmr4gI4Rfj5ukQX6HNSWnM2qj8QU": {
+            "ApiLambdaVersionVOdS0Bbbgs829W6CppzdIsBOX82UWTLbUoVPXHplo": {
               "Type": "AWS::Lambda::Version",
               "DeletionPolicy": "Retain",
               "Properties": {
                 "FunctionName": {
                   "Ref": "ApiLambdaFunction"
                 },
-                "CodeSha256": "JTWKrg9Yg5ED7uakqDCYySKWmjmi1s3RlSYLZh/UyrA="
+                "CodeSha256": "9iyla4l5N8Cas0Nf4iwqGy/O19vwwASavk+zhZ3qRAI="
               }
             },
             "ApiGatewayRestApi": {
@@ -280,7 +280,7 @@
                 "ApiLambdaPermissionApiGateway"
               ]
             },
-            "ApiGatewayDeployment1744352284908": {
+            "ApiGatewayDeployment1745585435328": {
               "Type": "AWS::ApiGateway::Deployment",
               "Properties": {
                 "RestApiId": {
@@ -341,7 +341,7 @@
             "ApiLambdaFunctionQualifiedArn": {
               "Description": "Current Lambda function version",
               "Value": {
-                "Ref": "ApiLambdaVersionsYpJQYhQVANnvJMmr4gI4Rfj5ukQX6HNSWnM2qj8QU"
+                "Ref": "ApiLambdaVersionVOdS0Bbbgs829W6CppzdIsBOX82UWTLbUoVPXHplo"
               },
               "Export": {
                 "Name": "sls-mulcho-shipping-backend-dev-ApiLambdaFunctionQualifiedArn"
@@ -402,7 +402,7 @@
           "timeout": 30,
           "runtime": "nodejs22.x",
           "vpc": {},
-          "versionLogicalId": "ApiLambdaVersionsYpJQYhQVANnvJMmr4gI4Rfj5ukQX6HNSWnM2qj8QU"
+          "versionLogicalId": "ApiLambdaVersionVOdS0Bbbgs829W6CppzdIsBOX82UWTLbUoVPXHplo"
         }
       },
       "plugins": [
@@ -417,7 +417,7 @@
       "memorySize": 512,
       "environment": {
         "MONGO_URI": "mongodb+srv://spyc91:YdeHxdwsCby19hkR@cluster0.ac1km.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
-        "CLIENT_ORIGIN": "http://localhost:5173",
+        "CLIENT_ORIGIN": "https://www.mulcho.com.np",
         "SESSION_SECRET": "<REDACTED>",
         "JWT_SECRET": "<REDACTED>",
         "EMAIL_USER": "mulcho456@gmail.com",
@@ -521,7 +521,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-31d59c5a-b080",
-                "S3Key": "serverless/mulcho-shipping-backend/dev/1744352301412-2025-04-11T06:18:21.412Z/mulcho-shipping-backend.zip"
+                "S3Key": "serverless/mulcho-shipping-backend/dev/1745585455195-2025-04-25T12:50:55.195Z/mulcho-shipping-backend.zip"
               },
               "Handler": "src/server.handler",
               "Runtime": "nodejs22.x",
@@ -531,7 +531,7 @@
               "Environment": {
                 "Variables": {
                   "MONGO_URI": "mongodb+srv://spyc91:YdeHxdwsCby19hkR@cluster0.ac1km.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
-                  "CLIENT_ORIGIN": "http://localhost:5173",
+                  "CLIENT_ORIGIN": "https://www.mulcho.com.np",
                   "SESSION_SECRET": "<REDACTED>",
                   "JWT_SECRET": "<REDACTED>",
                   "EMAIL_USER": "mulcho456@gmail.com",
@@ -552,14 +552,14 @@
               "ApiLogGroup"
             ]
           },
-          "ApiLambdaVersionsYpJQYhQVANnvJMmr4gI4Rfj5ukQX6HNSWnM2qj8QU": {
+          "ApiLambdaVersionVOdS0Bbbgs829W6CppzdIsBOX82UWTLbUoVPXHplo": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "ApiLambdaFunction"
               },
-              "CodeSha256": "JTWKrg9Yg5ED7uakqDCYySKWmjmi1s3RlSYLZh/UyrA="
+              "CodeSha256": "9iyla4l5N8Cas0Nf4iwqGy/O19vwwASavk+zhZ3qRAI="
             }
           },
           "ApiGatewayRestApi": {
@@ -684,7 +684,7 @@
               "ApiLambdaPermissionApiGateway"
             ]
           },
-          "ApiGatewayDeployment1744352284908": {
+          "ApiGatewayDeployment1745585435328": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -745,7 +745,7 @@
           "ApiLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "ApiLambdaVersionsYpJQYhQVANnvJMmr4gI4Rfj5ukQX6HNSWnM2qj8QU"
+              "Ref": "ApiLambdaVersionVOdS0Bbbgs829W6CppzdIsBOX82UWTLbUoVPXHplo"
             },
             "Export": {
               "Name": "sls-mulcho-shipping-backend-dev-ApiLambdaFunctionQualifiedArn"
@@ -790,7 +790,7 @@
       "serviceProvider": null,
       "instanceParameters": null
     },
-    "serviceRawFile": "service: mulcho-shipping-backend\r\n\r\nprovider:\r\n  name: aws\r\n  runtime: nodejs22.x\r\n  region: ap-south-1\r\n  timeout: 30\r\n  memorySize: 512\r\n  environment:\r\n    MONGO_URI: ${env:MONGODBCONNECTIONSTRING}\r\n    CLIENT_ORIGIN: ${env:CLIENT_ORIGIN}\r\n    SESSION_SECRET: ${env:SESSION_SECRET}\r\n    JWT_SECRET: ${env:JWT_SECRET}\r\n    EMAIL_USER: ${env:EMAIL_USER}\r\n    EMAIL_PASS: ${env:EMAIL_PASS}\r\n    CLOUDINARY_CLOUD_NAME: ${env:CLOUDINARY_CLOUD_NAME}\r\n    CLOUDINARY_API_KEY: ${env:CLOUDINARY_API_KEY}\r\n    CLOUDINARY_API_SECRET: ${env:CLOUDINARY_API_SECRET}\r\n\r\nfunctions:\r\n  api:\r\n    handler: src/server.handler\r\n    events:\r\n      - http:\r\n          path: /\r\n          method: any\r\n      - http:\r\n          path: /{proxy+}\r\n          method: any\r\n\r\nplugins:\r\n  - serverless-offline\r\n",
+    "serviceRawFile": "service: mulcho-shipping-backend\r\n\r\nprovider:\r\n  name: aws\r\n  runtime: nodejs22.x\r\n  region: ap-south-1\r\n  timeout: 30\r\n  memorySize: 512\r\n  environment:\r\n    MONGO_URI: ${env:MONGODBCONNECTIONSTRING}\r\n    CLIENT_ORIGIN: \"https://www.mulcho.com.np\"\r\n    SESSION_SECRET: ${env:SESSION_SECRET}\r\n    JWT_SECRET: ${env:JWT_SECRET}\r\n    EMAIL_USER: ${env:EMAIL_USER}\r\n    EMAIL_PASS: ${env:EMAIL_PASS}\r\n    CLOUDINARY_CLOUD_NAME: ${env:CLOUDINARY_CLOUD_NAME}\r\n    CLOUDINARY_API_KEY: ${env:CLOUDINARY_API_KEY}\r\n    CLOUDINARY_API_SECRET: ${env:CLOUDINARY_API_SECRET}\r\n\r\nfunctions:\r\n  api:\r\n    handler: src/server.handler\r\n    events:\r\n      - http:\r\n          path: /\r\n          method: any\r\n      - http:\r\n          path: /{proxy+}\r\n          method: any\r\n\r\nplugins:\r\n  - serverless-offline\r\n",
     "command": [
       "deploy"
     ],
@@ -803,12 +803,12 @@
     "serviceProviderAwsCfStackName": "mulcho-shipping-backend-dev",
     "serviceProviderAwsCfStackId": "arn:aws:cloudformation:ap-south-1:585008058859:stack/mulcho-shipping-backend-dev/476653a0-01a7-11f0-be2d-0aab008e9b5f",
     "serviceProviderAwsCfStackCreated": "2025-03-15T14:10:42.450Z",
-    "serviceProviderAwsCfStackUpdated": "2025-04-11T06:12:42.142Z",
+    "serviceProviderAwsCfStackUpdated": "2025-04-25T10:57:23.861Z",
     "serviceProviderAwsCfStackStatus": "UPDATE_COMPLETE",
     "serviceProviderAwsCfStackOutputs": [
       {
         "OutputKey": "ApiLambdaFunctionQualifiedArn",
-        "OutputValue": "arn:aws:lambda:ap-south-1:585008058859:function:mulcho-shipping-backend-dev-api:3",
+        "OutputValue": "arn:aws:lambda:ap-south-1:585008058859:function:mulcho-shipping-backend-dev-api:6",
         "Description": "Current Lambda function version",
         "ExportName": "sls-mulcho-shipping-backend-dev-ApiLambdaFunctionQualifiedArn"
       },
@@ -917,7 +917,7 @@
           "Properties": {
             "Code": {
               "S3Bucket": "serverless-framework-deployments-ap-south-1-31d59c5a-b080",
-              "S3Key": "serverless/mulcho-shipping-backend/dev/1744352301412-2025-04-11T06:18:21.412Z/mulcho-shipping-backend.zip"
+              "S3Key": "serverless/mulcho-shipping-backend/dev/1745585455195-2025-04-25T12:50:55.195Z/mulcho-shipping-backend.zip"
             },
             "Handler": "src/server.handler",
             "Runtime": "nodejs22.x",
@@ -927,7 +927,7 @@
             "Environment": {
               "Variables": {
                 "MONGO_URI": "mongodb+srv://spyc91:YdeHxdwsCby19hkR@cluster0.ac1km.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
-                "CLIENT_ORIGIN": "http://localhost:5173",
+                "CLIENT_ORIGIN": "https://www.mulcho.com.np",
                 "SESSION_SECRET": "<REDACTED>",
                 "JWT_SECRET": "<REDACTED>",
                 "EMAIL_USER": "mulcho456@gmail.com",
@@ -948,14 +948,14 @@
             "ApiLogGroup"
           ]
         },
-        "ApiLambdaVersionsYpJQYhQVANnvJMmr4gI4Rfj5ukQX6HNSWnM2qj8QU": {
+        "ApiLambdaVersionVOdS0Bbbgs829W6CppzdIsBOX82UWTLbUoVPXHplo": {
           "Type": "AWS::Lambda::Version",
           "DeletionPolicy": "Retain",
           "Properties": {
             "FunctionName": {
               "Ref": "ApiLambdaFunction"
             },
-            "CodeSha256": "JTWKrg9Yg5ED7uakqDCYySKWmjmi1s3RlSYLZh/UyrA="
+            "CodeSha256": "9iyla4l5N8Cas0Nf4iwqGy/O19vwwASavk+zhZ3qRAI="
           }
         },
         "ApiGatewayRestApi": {
@@ -1080,7 +1080,7 @@
             "ApiLambdaPermissionApiGateway"
           ]
         },
-        "ApiGatewayDeployment1744352284908": {
+        "ApiGatewayDeployment1745585435328": {
           "Type": "AWS::ApiGateway::Deployment",
           "Properties": {
             "RestApiId": {
@@ -1141,7 +1141,7 @@
         "ApiLambdaFunctionQualifiedArn": {
           "Description": "Current Lambda function version",
           "Value": {
-            "Ref": "ApiLambdaVersionsYpJQYhQVANnvJMmr4gI4Rfj5ukQX6HNSWnM2qj8QU"
+            "Ref": "ApiLambdaVersionVOdS0Bbbgs829W6CppzdIsBOX82UWTLbUoVPXHplo"
           },
           "Export": {
             "Name": "sls-mulcho-shipping-backend-dev-ApiLambdaFunctionQualifiedArn"

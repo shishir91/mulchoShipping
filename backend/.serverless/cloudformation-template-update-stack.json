@@ -91,7 +91,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-south-1-31d59c5a-b080",
-          "S3Key": "serverless/mulcho-shipping-backend/dev/1744352301412-2025-04-11T06:18:21.412Z/mulcho-shipping-backend.zip"
+          "S3Key": "serverless/mulcho-shipping-backend/dev/1745585455195-2025-04-25T12:50:55.195Z/mulcho-shipping-backend.zip"
         },
         "Handler": "src/server.handler",
         "Runtime": "nodejs22.x",
@@ -101,7 +101,7 @@
         "Environment": {
           "Variables": {
             "MONGO_URI": "mongodb+srv://spyc91:YdeHxdwsCby19hkR@cluster0.ac1km.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
-            "CLIENT_ORIGIN": "http://localhost:5173",
+            "CLIENT_ORIGIN": "https://www.mulcho.com.np",
             "SESSION_SECRET": "sessionsecretformulchooisaverytopsecretyouknow",
             "JWT_SECRET": "mulchosecretisasecretwhichisaverytopsecret",
             "EMAIL_USER": "mulcho456@gmail.com",
@@ -122,14 +122,14 @@
         "ApiLogGroup"
       ]
     },
-    "ApiLambdaVersionsYpJQYhQVANnvJMmr4gI4Rfj5ukQX6HNSWnM2qj8QU": {
+    "ApiLambdaVersionVOdS0Bbbgs829W6CppzdIsBOX82UWTLbUoVPXHplo": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ApiLambdaFunction"
         },
-        "CodeSha256": "JTWKrg9Yg5ED7uakqDCYySKWmjmi1s3RlSYLZh/UyrA="
+        "CodeSha256": "9iyla4l5N8Cas0Nf4iwqGy/O19vwwASavk+zhZ3qRAI="
       }
     },
     "ApiGatewayRestApi": {
@@ -254,7 +254,7 @@
         "ApiLambdaPermissionApiGateway"
       ]
     },
-    "ApiGatewayDeployment1744352284908": {
+    "ApiGatewayDeployment1745585435328": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -315,7 +315,7 @@
     "ApiLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ApiLambdaVersionsYpJQYhQVANnvJMmr4gI4Rfj5ukQX6HNSWnM2qj8QU"
+        "Ref": "ApiLambdaVersionVOdS0Bbbgs829W6CppzdIsBOX82UWTLbUoVPXHplo"
       },
       "Export": {
         "Name": "sls-mulcho-shipping-backend-dev-ApiLambdaFunctionQualifiedArn"
